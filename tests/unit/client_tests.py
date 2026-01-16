@@ -354,6 +354,37 @@ class TestAkashClientErrorHandling:
         assert result == {}
 
 
+class TestAkashClientImports:
+    """Test that ALL client module imports actually work (not mocked)."""
+
+    def test_all_module_imports(self):
+        """Verify ALL 21 module imports work without mocking."""
+        from akash.modules.audit import AuditClient
+        from akash.modules.auth import AuthClient
+        from akash.modules.authz import AuthzClient
+        from akash.modules.bank import BankClient
+        from akash.modules.cert.client import CertClient
+        from akash.modules.deployment import DeploymentClient
+        from akash.modules.discovery.client import DiscoveryClient
+        from akash.modules.distribution import DistributionClient
+        from akash.modules.escrow import EscrowClient
+        from akash.modules.evidence import EvidenceClient
+        from akash.modules.feegrant import FeegrantClient
+        from akash.modules.governance import GovernanceClient
+        from akash.modules.ibc import IBCClient
+        from akash.modules.inflation import InflationClient
+        from akash.modules.inventory.client import InventoryClient
+        from akash.modules.manifest.client import ManifestClient
+        from akash.modules.market import MarketClient
+        from akash.modules.provider import ProviderClient
+        from akash.modules.slashing import SlashingClient
+        from akash.modules.staking import StakingClient
+        from akash.grpc_client import ProviderGRPCClient
+
+        # All imports succeeded if we reach here
+        assert True
+
+
 if __name__ == '__main__':
     print("✅ Running AkashClient unit tests")
     print("=" * 50)

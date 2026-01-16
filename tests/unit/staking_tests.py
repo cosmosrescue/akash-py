@@ -1016,6 +1016,31 @@ class TestStakingErrorHandlingScenarios:
             self.client.create_validator(self.mock_wallet, validator_info)
 
 
+class TestStakingQueryMissingCoverage:
+    """Test previously uncovered staking query functions."""
+
+    def test_query_unbonding_delegations_response_structure(self):
+        """Test QueryUnbondingDelegationsResponse structure."""
+        response = staking_query.QueryDelegatorUnbondingDelegationsResponse()
+
+        assert hasattr(response, 'unbonding_responses'), "QueryDelegatorUnbondingDelegationsResponse missing unbonding_responses"
+        assert hasattr(response, 'pagination'), "QueryDelegatorUnbondingDelegationsResponse missing pagination"
+
+    def test_query_redelegations_response_structure(self):
+        """Test QueryRedelegationsResponse structure."""
+        response = staking_query.QueryRedelegationsResponse()
+
+        assert hasattr(response, 'redelegation_responses'), "QueryRedelegationsResponse missing redelegation_responses"
+        assert hasattr(response, 'pagination'), "QueryRedelegationsResponse missing pagination"
+
+    def test_query_validator_delegations_response_structure(self):
+        """Test QueryValidatorDelegationsResponse structure."""
+        response = staking_query.QueryValidatorDelegationsResponse()
+
+        assert hasattr(response, 'delegation_responses'), "QueryValidatorDelegationsResponse missing delegation_responses"
+        assert hasattr(response, 'pagination'), "QueryValidatorDelegationsResponse missing pagination"
+
+
 if __name__ == '__main__':
     print("Running staking module tests")
     print("=" * 50)

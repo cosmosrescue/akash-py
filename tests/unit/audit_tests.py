@@ -23,21 +23,24 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from akash.proto.akash.audit.v1beta3 import audit_pb2 as audit_pb
-from akash.proto.akash.audit.v1beta3 import query_pb2 as audit_query
-from akash.proto.akash.base.v1beta3 import attribute_pb2 as attr_pb
+from akash.proto.akash.audit.v1 import audit_pb2 as audit_pb
+from akash.proto.akash.audit.v1 import query_pb2 as audit_query
+from akash.proto.akash.audit.v1 import msg_pb2 as audit_msg  # v1: Msg types moved to msg_pb2
+# v1: attributes moved to attributes/v1
+from akash.proto.akash.base.attributes.v1 import attribute_pb2 as attr_pb
 
 
 class TestAuditMessageStructures:
     """Test audit protobuf message structures and field access."""
 
     def test_provider_structure(self):
-        """Test Provider message structure and field access."""
-        provider = audit_pb.Provider()
+        """Test AuditedProvider message structure and field access."""
+        # v1: Provider renamed to AuditedProvider
+        provider = audit_pb.AuditedProvider()
 
         required_fields = ['owner', 'auditor', 'attributes']
         for field in required_fields:
-            assert hasattr(provider, field), f"Provider missing field: {field}"
+            assert hasattr(provider, field), f"AuditedProvider missing field: {field}"
 
         provider.owner = "akash1test"
         provider.auditor = "akash1auditor"
@@ -46,12 +49,13 @@ class TestAuditMessageStructures:
         assert provider.auditor == "akash1auditor"
 
     def test_audited_attributes_structure(self):
-        """Test AuditedAttributes message structure and field access."""
-        audited_attrs = audit_pb.AuditedAttributes()
+        """Test AuditedProvider message structure and field access."""
+        # v1: AuditedAttributes renamed to AuditedProvider
+        audited_attrs = audit_pb.AuditedProvider()
 
         required_fields = ['owner', 'auditor', 'attributes']
         for field in required_fields:
-            assert hasattr(audited_attrs, field), f"AuditedAttributes missing field: {field}"
+            assert hasattr(audited_attrs, field), f"AuditedProvider missing field: {field}"
 
         audited_attrs.owner = "akash1test"
         audited_attrs.auditor = "akash1auditor"
@@ -60,19 +64,20 @@ class TestAuditMessageStructures:
         assert audited_attrs.auditor == "akash1auditor"
 
     def test_attributes_response_structure(self):
-        """Test AttributesResponse message structure."""
-        response = audit_pb.AttributesResponse()
+        """Test QueryProvidersResponse message structure."""
+        # v1: AttributesResponse changed to QueryProvidersResponse with providers field
+        response = audit_query.QueryProvidersResponse()
 
-        assert hasattr(response, 'attributes'), "AttributesResponse missing attributes field"
+        assert hasattr(response, 'providers'), "QueryProvidersResponse missing providers field"
 
-        audited_attr = audit_pb.AuditedAttributes()
-        audited_attr.owner = "akash1test"
-        audited_attr.auditor = "akash1auditor"
+        audited_provider = audit_pb.AuditedProvider()
+        audited_provider.owner = "akash1test"
+        audited_provider.auditor = "akash1auditor"
 
-        response.attributes.append(audited_attr)
+        response.providers.append(audited_provider)
 
-        assert len(response.attributes) == 1
-        assert response.attributes[0].owner == "akash1test"
+        assert len(response.providers) == 1
+        assert response.providers[0].owner == "akash1test"
 
     def test_attributes_filters_structure(self):
         """Test AttributesFilters message structure."""
@@ -91,7 +96,8 @@ class TestAuditMessageStructures:
 
     def test_provider_attributes_integration(self):
         """Test provider with attributes integration."""
-        provider = audit_pb.Provider()
+        # v1: Provider renamed to AuditedProvider
+        provider = audit_pb.AuditedProvider()
         provider.owner = "akash1test"
         provider.auditor = "akash1auditor"
 
@@ -116,7 +122,8 @@ class TestAuditQueryResponses:
         assert hasattr(response, 'providers'), "QueryProvidersResponse missing providers field"
         assert hasattr(response, 'pagination'), "QueryProvidersResponse missing pagination field"
 
-        provider = audit_pb.Provider()
+        # v1: Provider renamed to AuditedProvider
+        provider = audit_pb.AuditedProvider()
         provider.owner = "akash1test"
         provider.auditor = "akash1auditor"
 
@@ -139,8 +146,8 @@ class TestAuditMessageConverters:
             _initialize_message_converters()
 
         required_converters = [
-            "/akash.audit.v1beta3.MsgSignProviderAttributes",
-            "/akash.audit.v1beta3.MsgDeleteProviderAttributes"
+            "/akash.audit.v1.MsgSignProviderAttributes",
+            "/akash.audit.v1.MsgDeleteProviderAttributes"
         ]
 
         for msg_type in required_converters:
@@ -150,7 +157,8 @@ class TestAuditMessageConverters:
 
     def test_msg_sign_provider_attributes_protobuf_compatibility(self):
         """Test MsgSignProviderAttributes protobuf field compatibility."""
-        pb_msg = audit_pb.MsgSignProviderAttributes()
+        # v1: Msg types moved to msg_pb2
+        pb_msg = audit_msg.MsgSignProviderAttributes()
 
         required_fields = ['owner', 'auditor', 'attributes']
         for field in required_fields:
@@ -164,7 +172,8 @@ class TestAuditMessageConverters:
 
     def test_msg_delete_provider_attributes_protobuf_compatibility(self):
         """Test MsgDeleteProviderAttributes protobuf field compatibility."""
-        pb_msg = audit_pb.MsgDeleteProviderAttributes()
+        # v1: Msg types moved to msg_pb2
+        pb_msg = audit_msg.MsgDeleteProviderAttributes()
 
         required_fields = ['owner', 'auditor', 'keys']
         for field in required_fields:
@@ -216,10 +225,11 @@ class TestAuditTransactionMessages:
             'MsgSignProviderAttributes', 'MsgDeleteProviderAttributes'
         ]
 
+        # v1: Msg types moved to msg_pb2
         for msg_name in expected_messages:
-            assert hasattr(audit_pb, msg_name), f"Missing audit message type: {msg_name}"
+            assert hasattr(audit_msg, msg_name), f"Missing audit message type: {msg_name}"
 
-            msg_class = getattr(audit_pb, msg_name)
+            msg_class = getattr(audit_msg, msg_name)
             msg_instance = msg_class()
             assert msg_instance is not None
 
@@ -229,17 +239,19 @@ class TestAuditTransactionMessages:
             'MsgSignProviderAttributesResponse', 'MsgDeleteProviderAttributesResponse'
         ]
 
+        # v1: Response types moved to msg_pb2
         for response_name in expected_responses:
-            assert hasattr(audit_pb, response_name), f"Missing audit response type: {response_name}"
+            assert hasattr(audit_msg, response_name), f"Missing audit response type: {response_name}"
 
-            response_class = getattr(audit_pb, response_name)
+            response_class = getattr(audit_msg, response_name)
             response_instance = response_class()
             assert response_instance is not None
 
     def test_audit_lifecycle_message_consistency(self):
         """Test audit lifecycle messages are consistent."""
-        sign_msg = audit_pb.MsgSignProviderAttributes()
-        delete_msg = audit_pb.MsgDeleteProviderAttributes()
+        # v1: Msg types moved to msg_pb2
+        sign_msg = audit_msg.MsgSignProviderAttributes()
+        delete_msg = audit_msg.MsgDeleteProviderAttributes()
 
         common_fields = ['owner', 'auditor']
         for field in common_fields:
@@ -264,15 +276,17 @@ class TestAuditErrorPatterns:
 
     def test_empty_attributes_handling(self):
         """Test handling of empty attributes."""
-        provider = audit_pb.Provider()
-        audited_attrs = audit_pb.AuditedAttributes()
+        # v1: Provider renamed to AuditedProvider
+        provider = audit_pb.AuditedProvider()
+        audited_attrs = audit_pb.AuditedAttributesStore()
 
         assert len(provider.attributes) == 0, "Provider should start with empty attributes"
-        assert len(audited_attrs.attributes) == 0, "AuditedAttributes should start with empty attributes"
+        assert len(audited_attrs.attributes) == 0, "AuditedAttributesStore should start with empty attributes"
 
     def test_empty_keys_handling(self):
         """Test handling of empty keys in delete message."""
-        delete_msg = audit_pb.MsgDeleteProviderAttributes()
+        # v1: Msg types moved to msg_pb2
+        delete_msg = audit_msg.MsgDeleteProviderAttributes()
 
         assert len(delete_msg.keys) == 0, "MsgDeleteProviderAttributes should start with empty keys"
 
@@ -299,7 +313,7 @@ class TestAuditModuleIntegration:
 
         expected_converters = ['MsgSignProviderAttributes', 'MsgDeleteProviderAttributes']
         for msg_class in expected_converters:
-            converter_key = f"/akash.audit.v1beta3.{msg_class}"
+            converter_key = f"/akash.audit.v1.{msg_class}"
             assert converter_key in _MESSAGE_CONVERTERS, f"Missing converter for: {msg_class}"
 
     def test_audit_query_consistency(self):
@@ -313,44 +327,44 @@ class TestAuditModuleIntegration:
 
     def test_owner_auditor_relationship_consistency(self):
         """Test owner-auditor relationship consistency across messages."""
-
-        provider = audit_pb.Provider()
+        # v1: Provider renamed to AuditedProvider, Msg types moved to msg_pb2
+        provider = audit_pb.AuditedProvider()
         provider.owner = "akash1owner"
         provider.auditor = "akash1auditor"
 
-        audited = audit_pb.AuditedAttributes()
-        audited.owner = "akash1owner"
-        audited.auditor = "akash1auditor"
+        # v1: AuditedAttributesStore only has attributes field, not owner/auditor
+        # so we don't include it in this test
 
-        sign_msg = audit_pb.MsgSignProviderAttributes()
+        sign_msg = audit_msg.MsgSignProviderAttributes()
         sign_msg.owner = "akash1owner"
         sign_msg.auditor = "akash1auditor"
 
-        delete_msg = audit_pb.MsgDeleteProviderAttributes()
+        delete_msg = audit_msg.MsgDeleteProviderAttributes()
         delete_msg.owner = "akash1owner"
         delete_msg.auditor = "akash1auditor"
 
-        objects = [provider, audited, sign_msg, delete_msg]
+        # Only test objects that have owner/auditor fields
+        objects = [provider, sign_msg, delete_msg]
         for obj in objects:
             assert obj.owner == "akash1owner", f"Inconsistent owner in {type(obj).__name__}"
             assert obj.auditor == "akash1auditor", f"Inconsistent auditor in {type(obj).__name__}"
 
     def test_attribute_integration_consistency(self):
         """Test attribute integration consistency across audit structures."""
-
-        provider = audit_pb.Provider()
+        # v1: Provider renamed to AuditedProvider, Msg types moved to msg_pb2
+        provider = audit_pb.AuditedProvider()
         attr1 = attr_pb.Attribute()
         attr1.key = "region"
         attr1.value = "us-west"
         provider.attributes.append(attr1)
 
-        audited = audit_pb.AuditedAttributes()
+        audited = audit_pb.AuditedAttributesStore()
         attr2 = attr_pb.Attribute()
         attr2.key = "tier"
         attr2.value = "community"
         audited.attributes.append(attr2)
 
-        sign_msg = audit_pb.MsgSignProviderAttributes()
+        sign_msg = audit_msg.MsgSignProviderAttributes()
         attr3 = attr_pb.Attribute()
         attr3.key = "location"
         attr3.value = "datacenter"
@@ -452,7 +466,7 @@ class TestAuditQueryOperations:
 
         audit_client = AuditClient(mock_akash_client)
 
-        with patch('akash.proto.akash.audit.v1beta3.query_pb2.QueryProvidersResponse') as mock_response_class:
+        with patch('akash.proto.akash.audit.v1.query_pb2.QueryProvidersResponse') as mock_response_class:
             mock_response_instance = Mock()
             mock_provider = Mock()
             mock_provider.owner = "akash1owner"
@@ -557,7 +571,7 @@ class TestAuditQueryOperations:
 
         audit_client = AuditClient(mock_akash_client)
 
-        with patch('akash.proto.akash.audit.v1beta3.query_pb2.QueryProvidersResponse') as mock_response_class:
+        with patch('akash.proto.akash.audit.v1.query_pb2.QueryProvidersResponse') as mock_response_class:
             mock_response_instance = Mock()
             mock_provider = Mock()
             mock_provider.owner = "akash1owner"
@@ -588,7 +602,7 @@ class TestAuditQueryOperations:
 
         audit_client = AuditClient(mock_akash_client)
 
-        with patch('akash.proto.akash.audit.v1beta3.query_pb2.QueryProvidersResponse') as mock_response_class:
+        with patch('akash.proto.akash.audit.v1.query_pb2.QueryProvidersResponse') as mock_response_class:
             mock_response_instance = Mock()
             mock_provider1 = Mock()
             mock_provider1.owner = "akash1owner1"
@@ -647,7 +661,7 @@ class TestAuditTransactionOperations:
             call_args = mock_broadcast.call_args[1]
             messages = call_args['messages']
             assert len(messages) == 1
-            assert messages[0]['@type'] == '/akash.audit.v1beta3.MsgSignProviderAttributes'
+            assert messages[0]['@type'] == '/akash.audit.v1.MsgSignProviderAttributes'
             assert messages[0]['owner'] == 'akash1owner'
             assert messages[0]['auditor'] == 'akash1auditor'
             assert len(messages[0]['attributes']) == 2
@@ -705,7 +719,7 @@ class TestAuditTransactionOperations:
             call_args = mock_broadcast.call_args[1]
             messages = call_args['messages']
             assert len(messages) == 1
-            assert messages[0]['@type'] == '/akash.audit.v1beta3.MsgDeleteProviderAttributes'
+            assert messages[0]['@type'] == '/akash.audit.v1.MsgDeleteProviderAttributes'
             assert messages[0]['owner'] == 'akash1owner'
             assert messages[0]['auditor'] == 'akash1auditor'
             assert messages[0]['keys'] == keys_to_delete
@@ -922,7 +936,7 @@ class TestAuditErrorHandlingScenarios:
 
         audit_client = AuditClient(mock_akash_client)
 
-        with patch('akash.proto.akash.audit.v1beta3.query_pb2.QueryProvidersResponse') as mock_response_class:
+        with patch('akash.proto.akash.audit.v1.query_pb2.QueryProvidersResponse') as mock_response_class:
             mock_response_instance = Mock()
             mock_response_instance.providers = []
             mock_response_class.return_value = mock_response_instance

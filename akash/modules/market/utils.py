@@ -84,7 +84,7 @@ class MarketUtils:
     ) -> Dict[str, Any]:
         """Create bid message for testing."""
         return {
-            "@type": "/akash.market.v1beta4.MsgCreateBid",
+            "@type": "/akash.market.v1beta5.MsgCreateBid",
             "id": {
                 "owner": deployment_owner,
                 "dseq": deployment_dseq,
@@ -106,7 +106,7 @@ class MarketUtils:
     ) -> Dict[str, Any]:
         """Create close bid message for testing."""
         return {
-            "@type": "/akash.market.v1beta4.MsgCloseBid",
+            "@type": "/akash.market.v1beta5.MsgCloseBid",
             "id": {
                 "owner": deployment_owner,
                 "dseq": deployment_dseq,
@@ -126,7 +126,7 @@ class MarketUtils:
     ) -> Dict[str, Any]:
         """Create lease message for testing."""
         return {
-            "@type": "/akash.market.v1beta4.MsgCreateLease",
+            "@type": "/akash.market.v1beta5.MsgCreateLease",
             "id": {
                 "owner": deployment_owner,
                 "dseq": deployment_dseq,
@@ -146,7 +146,7 @@ class MarketUtils:
     ) -> Dict[str, Any]:
         """Create close lease message for testing."""
         return {
-            "@type": "/akash.market.v1beta4.MsgCloseLease",
+            "@type": "/akash.market.v1beta5.MsgCloseLease",
             "id": {
                 "owner": deployment_owner,
                 "dseq": deployment_dseq,
@@ -166,7 +166,7 @@ class MarketUtils:
     ) -> Dict[str, Any]:
         """Create withdraw lease message for testing."""
         return {
-            "@type": "/akash.market.v1beta4.MsgWithdrawLease",
+            "@type": "/akash.market.v1beta5.MsgWithdrawLease",
             "id": {
                 "owner": deployment_owner,
                 "dseq": deployment_dseq,

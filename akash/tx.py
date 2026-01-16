@@ -296,19 +296,19 @@ def _initialize_message_converters():
         )
 
         register_message_converter(
-            "/akash.market.v1beta4.MsgCreateBid", convert_msg_create_bid
+            "/akash.market.v1beta5.MsgCreateBid", convert_msg_create_bid
         )
         register_message_converter(
-            "/akash.market.v1beta4.MsgCloseBid", convert_msg_close_bid
+            "/akash.market.v1beta5.MsgCloseBid", convert_msg_close_bid
         )
         register_message_converter(
-            "/akash.market.v1beta4.MsgCreateLease", convert_msg_create_lease
+            "/akash.market.v1beta5.MsgCreateLease", convert_msg_create_lease
         )
         register_message_converter(
-            "/akash.market.v1beta4.MsgCloseLease", convert_msg_close_lease
+            "/akash.market.v1beta5.MsgCloseLease", convert_msg_close_lease
         )
         register_message_converter(
-            "/akash.market.v1beta4.MsgWithdrawLease", convert_msg_withdraw_lease
+            "/akash.market.v1beta5.MsgWithdrawLease", convert_msg_withdraw_lease
         )
     except ImportError:
         pass
@@ -320,10 +320,10 @@ def _initialize_message_converters():
         )
 
         register_message_converter(
-            "/akash.provider.v1beta3.MsgCreateProvider", convert_msg_create_provider
+            "/akash.provider.v1beta4.MsgCreateProvider", convert_msg_create_provider
         )
         register_message_converter(
-            "/akash.provider.v1beta3.MsgUpdateProvider", convert_msg_update_provider
+            "/akash.provider.v1beta4.MsgUpdateProvider", convert_msg_update_provider
         )
     except ImportError:
         pass
@@ -335,11 +335,11 @@ def _initialize_message_converters():
         )
 
         register_message_converter(
-            "/akash.audit.v1beta3.MsgSignProviderAttributes",
+            "/akash.audit.v1.MsgSignProviderAttributes",
             convert_msg_sign_provider_attributes,
         )
         register_message_converter(
-            "/akash.audit.v1beta3.MsgDeleteProviderAttributes",
+            "/akash.audit.v1.MsgDeleteProviderAttributes",
             convert_msg_delete_provider_attributes,
         )
     except ImportError:
@@ -351,10 +351,10 @@ def _initialize_message_converters():
         )
 
         register_message_converter(
-            "/akash.cert.v1beta3.MsgCreateCertificate", encode_msg_create_certificate
+            "/akash.cert.v1.MsgCreateCertificate", encode_msg_create_certificate
         )
         register_message_converter(
-            "/akash.cert.v1beta3.MsgRevokeCertificate", encode_msg_revoke_certificate
+            "/akash.cert.v1.MsgRevokeCertificate", encode_msg_revoke_certificate
         )
     except ImportError:
         pass
@@ -371,28 +371,28 @@ def _initialize_message_converters():
         )
 
         register_message_converter(
-            "/akash.deployment.v1beta3.MsgCreateDeployment",
+            "/akash.deployment.v1beta4.MsgCreateDeployment",
             convert_msg_create_deployment,
         )
         register_message_converter(
-            "/akash.deployment.v1beta3.MsgUpdateDeployment",
+            "/akash.deployment.v1beta4.MsgUpdateDeployment",
             convert_msg_update_deployment,
         )
         register_message_converter(
-            "/akash.deployment.v1beta3.MsgCloseDeployment", convert_msg_close_deployment
+            "/akash.deployment.v1beta4.MsgCloseDeployment", convert_msg_close_deployment
         )
         register_message_converter(
-            "/akash.deployment.v1beta3.MsgDepositDeployment",
+            "/akash.deployment.v1beta4.MsgDepositDeployment",
             convert_msg_deposit_deployment,
         )
         register_message_converter(
-            "/akash.deployment.v1beta3.MsgCloseGroup", convert_msg_close_group
+            "/akash.deployment.v1beta4.MsgCloseGroup", convert_msg_close_group
         )
         register_message_converter(
-            "/akash.deployment.v1beta3.MsgPauseGroup", convert_msg_pause_group
+            "/akash.deployment.v1beta4.MsgPauseGroup", convert_msg_pause_group
         )
         register_message_converter(
-            "/akash.deployment.v1beta3.MsgStartGroup", convert_msg_start_group
+            "/akash.deployment.v1beta4.MsgStartGroup", convert_msg_start_group
         )
     except ImportError:
         pass

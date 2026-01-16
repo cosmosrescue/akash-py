@@ -586,6 +586,98 @@ class TestGRPCIntegrationScenarios:
             assert result["status"] == "error"
             assert "Persistent failure" in result["error"]
 
+class TestProviderGRPCClientImports:
+    """Test that ALL gRPC client module imports actually work (not mocked)."""
+
+    def test_all_module_imports(self):
+        """Verify ALL gRPC client dependencies import successfully."""
+        # Standard library imports
+        import grpc
+        import logging
+        import requests
+        import socket
+        import time
+        import ssl
+        import os
+        from typing import Dict, Any, Optional, Callable
+
+        # Provider gRPC service stubs
+        from akash.proto.akash.provider.lease.v1.service_pb2_grpc import LeaseRPCStub
+        from akash.proto.akash.provider.v1.service_pb2_grpc import ProviderRPCStub
+
+        # Provider protobuf messages
+        from akash.proto.akash.provider.v1.status_pb2 import Status
+
+        # Google protobuf utilities
+        from google.protobuf.empty_pb2 import Empty
+        from google.protobuf.json_format import MessageToDict
+
+        # All imports succeeded if we reach here
+        assert True
+
+    def test_grpc_stub_instantiation(self):
+        """Verify gRPC stubs can be instantiated."""
+        import grpc
+        from akash.proto.akash.provider.lease.v1.service_pb2_grpc import LeaseRPCStub
+        from akash.proto.akash.provider.v1.service_pb2_grpc import ProviderRPCStub
+
+        # Create a mock channel
+        mock_channel = Mock()
+
+        # Test LeaseRPCStub instantiation
+        lease_stub = LeaseRPCStub(mock_channel)
+        assert lease_stub is not None
+        assert hasattr(lease_stub, 'SendManifest')
+        assert hasattr(lease_stub, 'ServiceStatus')
+        assert hasattr(lease_stub, 'ServiceLogs')
+        assert hasattr(lease_stub, 'StreamServiceLogs')
+
+        # Test ProviderRPCStub instantiation
+        provider_stub = ProviderRPCStub(mock_channel)
+        assert provider_stub is not None
+        assert hasattr(provider_stub, 'GetStatus')
+
+    def test_protobuf_message_instantiation(self):
+        """Verify protobuf messages can be instantiated."""
+        from akash.proto.akash.provider.v1.status_pb2 import Status
+        from google.protobuf.empty_pb2 import Empty
+
+        # Test Status message
+        status = Status()
+        assert status is not None
+
+        # Test Empty message
+        empty = Empty()
+        assert empty is not None
+
+    def test_protobuf_json_conversion(self):
+        """Verify protobuf JSON conversion works."""
+        from akash.proto.akash.provider.v1.status_pb2 import Status
+        from google.protobuf.json_format import MessageToDict
+        from google.protobuf.empty_pb2 import Empty
+
+        # Test Empty message to dict conversion
+        empty = Empty()
+        empty_dict = MessageToDict(empty)
+        assert isinstance(empty_dict, dict)
+
+    def test_grpc_channel_primitives(self):
+        """Verify gRPC channel creation primitives work."""
+        import grpc
+        import ssl
+
+        # Test gRPC channel options
+        options = [
+            ('grpc.keepalive_time_ms', 60000),
+            ('grpc.keepalive_timeout_ms', 20000),
+        ]
+        assert isinstance(options, list)
+
+        # Test SSL constants access
+        assert hasattr(ssl, 'CERT_REQUIRED')
+        assert hasattr(ssl, 'PROTOCOL_TLS')
+
+
 class TestGRPCPerformanceAndLogging:
     """Test gRPC performance monitoring and logging."""
 

@@ -2,8 +2,9 @@ import base64
 import logging
 from typing import Dict, List, Any, Optional
 
-from akash.proto.akash.deployment.v1beta3 import deployment_pb2 as deployment_pb
-from akash.proto.akash.deployment.v1beta3 import query_pb2 as query_pb
+from akash.proto.akash.deployment.v1 import deployment_pb2 as deployment_pb
+from akash.proto.akash.deployment.v1beta4 import filters_pb2
+from akash.proto.akash.deployment.v1beta4 import query_pb2 as query_pb
 from akash.proto.cosmos.base.query.v1beta1.pagination_pb2 import PageRequest
 
 logger = logging.getLogger(__name__)
@@ -40,7 +41,7 @@ class DeploymentQuery:
 
             query = query_pb.QueryDeploymentsRequest()
             if owner:
-                filters = deployment_pb.DeploymentFilters(owner=owner)
+                filters = filters_pb2.DeploymentFilters(owner=owner)
                 query.filters.CopyFrom(filters)
 
             if limit is not None or offset is not None or count_total:
@@ -53,7 +54,7 @@ class DeploymentQuery:
                     pagination.count_total = count_total
                 query.pagination.CopyFrom(pagination)
 
-            query_path = "/akash.deployment.v1beta3.Query/Deployments"
+            query_path = "/akash.deployment.v1beta4.Query/Deployments"
             query_data = query.SerializeToString()
 
             result = self.akash_client.abci_query(
@@ -143,7 +144,7 @@ class DeploymentQuery:
             deployment_id = deployment_pb.DeploymentID(owner=owner, dseq=dseq)
             query = query_pb.QueryDeploymentRequest(id=deployment_id)
 
-            query_path = "/akash.deployment.v1beta3.Query/Deployment"
+            query_path = "/akash.deployment.v1beta4.Query/Deployment"
             query_data = query.SerializeToString()
 
             result = self.akash_client.abci_query(

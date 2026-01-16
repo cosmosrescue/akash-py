@@ -3,8 +3,9 @@ import logging
 import os
 from typing import Dict, Optional, Any
 
-from akash.proto.akash.cert.v1beta3 import cert_pb2 as cert_pb2
-from akash.proto.akash.cert.v1beta3 import query_pb2 as cert_query_pb2
+from akash.proto.akash.cert.v1 import cert_pb2 as cert_pb2
+from akash.proto.akash.cert.v1 import query_pb2 as cert_query_pb2
+from akash.proto.akash.cert.v1 import filters_pb2  # v1: CertificateFilter moved to filters_pb2
 from akash.proto.cosmos.base.query.v1beta1 import pagination_pb2 as pagination_pb2
 
 logger = logging.getLogger(__name__)
@@ -47,7 +48,8 @@ class CertQuery:
 
             request = cert_query_pb2.QueryCertificatesRequest()
 
-            cert_filter = cert_pb2.CertificateFilter()
+            # v1: CertificateFilter moved to filters_pb2
+            cert_filter = filters_pb2.CertificateFilter()
             if owner:
                 cert_filter.owner = owner
             if serial:
@@ -65,7 +67,7 @@ class CertQuery:
             page_request.reverse = reverse
             request.pagination.CopyFrom(page_request)
 
-            path = "/akash.cert.v1beta3.Query/Certificates"
+            path = "/akash.cert.v1.Query/Certificates"
             result = self.akash_client.rpc_query(
                 "abci_query",
                 [path, request.SerializeToString().hex().upper(), "0", False],

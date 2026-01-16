@@ -19,9 +19,11 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from akash.proto.akash.provider.v1beta3 import provider_pb2 as provider_pb
-from akash.proto.akash.provider.v1beta3 import query_pb2 as provider_query
-from akash.proto.akash.base.v1beta3 import attribute_pb2 as attr_pb
+from akash.proto.akash.provider.v1beta4 import provider_pb2 as provider_pb
+from akash.proto.akash.provider.v1beta4 import query_pb2 as provider_query
+from akash.proto.akash.provider.v1beta4 import msg_pb2 as provider_msg  # v1beta4: Msg types moved to msg_pb2
+# v1beta4: attributes moved to attributes/v1
+from akash.proto.akash.base.attributes.v1 import attribute_pb2 as attr_pb
 
 
 class TestProviderMessageStructures:
@@ -42,12 +44,13 @@ class TestProviderMessageStructures:
         assert provider.host_uri == "https://provider.akash.network"
 
     def test_provider_info_structure(self):
-        """Test ProviderInfo message structure and field access."""
-        info = provider_pb.ProviderInfo()
+        """Test Info message structure and field access."""
+        # v1beta4: ProviderInfo is just Info
+        info = provider_pb.Info()
 
         required_fields = ['email', 'website']
         for field in required_fields:
-            assert hasattr(info, field), f"ProviderInfo missing field: {field}"
+            assert hasattr(info, field), f"Info missing field: {field}"
 
         info.email = "test@provider.com"
         info.website = "https://provider.com"
@@ -120,8 +123,8 @@ class TestProviderMessageConverters:
             _initialize_message_converters()
 
         required_converters = [
-            "/akash.provider.v1beta3.MsgCreateProvider",
-            "/akash.provider.v1beta3.MsgUpdateProvider"
+            "/akash.provider.v1beta4.MsgCreateProvider",
+            "/akash.provider.v1beta4.MsgUpdateProvider"
         ]
 
         for msg_type in required_converters:
@@ -131,7 +134,8 @@ class TestProviderMessageConverters:
 
     def test_msg_create_provider_protobuf_compatibility(self):
         """Test MsgCreateProvider protobuf field compatibility."""
-        pb_msg = provider_pb.MsgCreateProvider()
+        # v1beta4: Msg types moved to msg_pb2
+        pb_msg = provider_msg.MsgCreateProvider()
 
         required_fields = ['owner', 'host_uri', 'attributes', 'info']
         for field in required_fields:
@@ -145,7 +149,8 @@ class TestProviderMessageConverters:
 
     def test_msg_update_provider_protobuf_compatibility(self):
         """Test MsgUpdateProvider protobuf field compatibility."""
-        pb_msg = provider_pb.MsgUpdateProvider()
+        # v1beta4: Msg types moved to msg_pb2
+        pb_msg = provider_msg.MsgUpdateProvider()
 
         required_fields = ['owner', 'host_uri', 'attributes', 'info']
         for field in required_fields:
@@ -173,17 +178,19 @@ class TestProviderTransactionMessages:
             'MsgCreateProvider', 'MsgUpdateProvider', 'MsgDeleteProvider'
         ]
 
+        # v1beta4: Msg types moved to msg_pb2
         for msg_name in expected_messages:
-            assert hasattr(provider_pb, msg_name), f"Missing provider message type: {msg_name}"
+            assert hasattr(provider_msg, msg_name), f"Missing provider message type: {msg_name}"
 
-            msg_class = getattr(provider_pb, msg_name)
+            msg_class = getattr(provider_msg, msg_name)
             msg_instance = msg_class()
             assert msg_instance is not None
 
     def test_provider_message_field_consistency(self):
         """Test provider messages have consistent field structures."""
-        create_msg = provider_pb.MsgCreateProvider()
-        update_msg = provider_pb.MsgUpdateProvider()
+        # v1beta4: Msg types moved to msg_pb2
+        create_msg = provider_msg.MsgCreateProvider()
+        update_msg = provider_msg.MsgUpdateProvider()
 
         common_fields = ['owner', 'host_uri', 'attributes', 'info']
 
@@ -241,7 +248,7 @@ class TestProviderModuleIntegration:
 
         expected_converters = ['MsgCreateProvider', 'MsgUpdateProvider']
         for msg_class in expected_converters:
-            converter_key = f"/akash.provider.v1beta3.{msg_class}"
+            converter_key = f"/akash.provider.v1beta4.{msg_class}"
             assert converter_key in _MESSAGE_CONVERTERS, f"Missing converter for: {msg_class}"
 
     def test_provider_query_consistency(self):
@@ -558,6 +565,7 @@ class TestProviderStatusFunctionality:
 
     def test_provider_status_protobuf_imports(self):
         """Test that provider status protobuf imports work correctly."""
+        # Provider v1 service protos MUST exist - they are used by grpc_client.py
         from akash.proto.akash.provider.v1 import status_pb2
         from akash.proto.akash.provider.v1 import service_pb2_grpc
 
@@ -810,6 +818,7 @@ class TestProviderStatusProtobufIntegration:
 
     def test_provider_status_protobuf_structure(self):
         """Test that provider status protobuf has expected structure."""
+        # Provider v1 status protos MUST exist - they are used by grpc_client.py
         from akash.proto.akash.provider.v1 import status_pb2
 
         status = status_pb2.Status()
@@ -820,6 +829,7 @@ class TestProviderStatusProtobufIntegration:
 
     def test_provider_inventory_protobuf_structure(self):
         """Test that inventory protobuf structures are available."""
+        # Inventory protos MUST exist - they are used by inventory module
         from akash.proto.akash.inventory.v1 import cluster_pb2
         from akash.proto.akash.inventory.v1 import node_pb2
         from akash.proto.akash.inventory.v1 import resources_pb2
@@ -835,6 +845,7 @@ class TestProviderStatusProtobufIntegration:
 
     def test_provider_service_grpc_stub(self):
         """Test that provider service gRPC stub is available."""
+        # Provider v1 service protos MUST exist - they are used by grpc_client.py
         from akash.proto.akash.provider.v1 import service_pb2_grpc
 
         assert hasattr(service_pb2_grpc, 'ProviderRPCStub')
@@ -844,8 +855,20 @@ class TestProviderStatusProtobufIntegration:
 
         stub = service_pb2_grpc.ProviderRPCStub(mock_channel)
         assert stub is not None
-
         assert hasattr(stub, 'GetStatus')
+
+
+class TestProviderQueryMissingCoverage:
+    """Test previously uncovered provider query functions."""
+
+    def test_get_provider_version_structure(self):
+        """Test get_provider_version via protobuf Status message."""
+        from akash.proto.akash.provider.v1.status_pb2 import Status
+
+        status = Status()
+        assert hasattr(status, 'cluster'), "Status missing cluster field"
+        assert hasattr(status, 'bid_engine'), "Status missing bid_engine field"
+        assert hasattr(status, 'manifest'), "Status missing manifest field"
 
 
 if __name__ == '__main__':

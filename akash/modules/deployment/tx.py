@@ -33,7 +33,7 @@ class DeploymentTx:
             sdl_yaml: SDL YAML content as string (required)
             deposit: Deposit amount (default: "5000000")
             deposit_denom: Deposit token denomination (default: "uakt")
-            version: Deployment version (calculated from SDL if not provided)
+            version: Deployment hash (calculated from SDL if not provided) - renamed from 'version' in v1beta4
             memo: Transaction memo
             fee_amount: Fee amount in uakt
             gas_limit: Gas limit override
@@ -71,14 +71,16 @@ class DeploymentTx:
             dseq = int(time.time())
 
             msg_dict = {
-                "@type": "/akash.deployment.v1beta3.MsgCreateDeployment",
+                "@type": "/akash.deployment.v1beta4.MsgCreateDeployment",
                 "id": {"owner": wallet.address, "dseq": str(dseq)},
-                "version": version_hash,
+                "hash": version_hash,
                 "groups": [
                     self._group_spec_to_dict(group_data) for group_data in deployment_groups
                 ],
-                "depositor": wallet.address,
-                "deposit": {"denom": deposit_denom, "amount": deposit},
+                "deposit": {
+                    "amount": {"denom": deposit_denom, "amount": deposit},
+                    "sources": ["1"]  # 1 = SourceBalance (from akash.base.deposit.v1.Source enum)
+                },
             }
 
             result = broadcast_transaction_rpc(
@@ -163,9 +165,9 @@ class DeploymentTx:
             )
 
             msg_dict = {
-                "@type": "/akash.deployment.v1beta3.MsgUpdateDeployment",
+                "@type": "/akash.deployment.v1beta4.MsgUpdateDeployment",
                 "id": {"owner": owner, "dseq": str(dseq)},
-                "version": version_hash
+                "hash": version_hash
             }
 
             return broadcast_transaction_rpc(

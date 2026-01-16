@@ -16,8 +16,8 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from akash.proto.akash.market.v1beta4.query_pb2 import QueryLeasesRequest, QueryLeasesResponse
-from akash.proto.akash.deployment.v1beta3.query_pb2 import QueryDeploymentRequest, QueryDeploymentResponse
+from akash.proto.akash.market.v1beta5.query_pb2 import QueryLeasesRequest, QueryLeasesResponse
+from akash.proto.akash.deployment.v1beta4.query_pb2 import QueryDeploymentRequest, QueryDeploymentResponse
 
 
 class TestEscrowStructures:
@@ -66,10 +66,10 @@ class TestEscrowStructures:
         response = QueryDeploymentResponse()
 
         assert hasattr(response, 'escrow_account'), "QueryDeploymentResponse missing escrow_account field"
-        assert hasattr(response.escrow_account, 'balance'), "EscrowAccount missing balance field"
-        assert hasattr(response.escrow_account, 'settled_at'), "EscrowAccount missing settled_at field"
-        assert hasattr(response.escrow_account.balance, 'amount'), "Balance missing amount field"
-        assert hasattr(response.escrow_account.balance, 'denom'), "Balance missing denom field"
+        # v1: Account now has nested state structure with funds instead of balance
+        assert hasattr(response.escrow_account, 'state'), "EscrowAccount missing state field"
+        assert hasattr(response.escrow_account.state, 'settled_at'), "AccountState missing settled_at field"
+        assert hasattr(response.escrow_account.state, 'funds'), "AccountState missing funds field"
 
     def test_decimal_precision_for_calculations(self):
         """Test decimal precision handling for escrow calculations."""
@@ -153,8 +153,8 @@ class TestEscrowClientFunctionality:
             }
         }
 
-        with patch('akash.proto.akash.market.v1beta4.query_pb2.QueryLeasesResponse') as mock_lease_cls:
-            with patch('akash.proto.akash.deployment.v1beta3.query_pb2.QueryDeploymentResponse') as mock_deploy_cls:
+        with patch('akash.proto.akash.market.v1beta5.query_pb2.QueryLeasesResponse') as mock_lease_cls:
+            with patch('akash.proto.akash.deployment.v1beta4.query_pb2.QueryDeploymentResponse') as mock_deploy_cls:
                 mock_lease_cls.return_value = mock_lease_response
                 mock_deploy_cls.return_value = mock_deployment_response
 
@@ -223,11 +223,11 @@ class TestEscrowClientFunctionality:
         calls = mock_client.abci_query.call_args_list
         paths_used = [call[1]['path'] for call in calls if 'path' in call[1]]
 
-        expected_lease_path = '/akash.market.v1beta4.Query/Leases'
+        expected_lease_path = '/akash.market.v1beta5.Query/Leases'
         assert any(expected_lease_path in path for path in paths_used), f"Missing query path: {expected_lease_path}"
 
         if len(paths_used) > 1:
-            expected_deployment_path = '/akash.deployment.v1beta3.Query/Deployment'
+            expected_deployment_path = '/akash.deployment.v1beta4.Query/Deployment'
             assert any(expected_deployment_path in path for path in
                        paths_used), f"Missing query path: {expected_deployment_path}"
 

@@ -37,8 +37,9 @@ class MarketQuery:
             List of order information with state as integer (1=open, 2=active, 3=closed)
         """
         try:
-            from akash.proto.akash.market.v1beta4.query_pb2 import QueryOrdersRequest
-            from akash.proto.akash.market.v1beta4.order_pb2 import OrderFilters
+            from akash.proto.akash.market.v1beta5.query_pb2 import QueryOrdersRequest
+            # v1beta5: OrderFilters moved to filters_pb2
+            from akash.proto.akash.market.v1beta5.filters_pb2 import OrderFilters
             from akash.proto.cosmos.base.query.v1beta1.pagination_pb2 import PageRequest
 
             logger.info(
@@ -70,7 +71,7 @@ class MarketQuery:
                 pagination.count_total = count_total
                 query.pagination.CopyFrom(pagination)
 
-            query_path = "/akash.market.v1beta4.Query/Orders"
+            query_path = "/akash.market.v1beta5.Query/Orders"
             query_data = query.SerializeToString()
 
             result = self.akash_client.abci_query(
@@ -94,7 +95,7 @@ class MarketQuery:
                 logger.info("Query succeeded but returned no orders (empty result)")
                 return []
 
-            from akash.proto.akash.market.v1beta4.query_pb2 import QueryOrdersResponse
+            from akash.proto.akash.market.v1beta5.query_pb2 import QueryOrdersResponse
             import base64
 
             try:
@@ -173,8 +174,9 @@ class MarketQuery:
             List of bid information
         """
         try:
-            from akash.proto.akash.market.v1beta4.query_pb2 import QueryBidsRequest
-            from akash.proto.akash.market.v1beta4.bid_pb2 import BidFilters
+            from akash.proto.akash.market.v1beta5.query_pb2 import QueryBidsRequest
+            # v1beta5: BidFilters moved to filters_pb2
+            from akash.proto.akash.market.v1beta5.filters_pb2 import BidFilters
             from akash.proto.cosmos.base.query.v1beta1.pagination_pb2 import PageRequest
 
             logger.info(
@@ -208,7 +210,7 @@ class MarketQuery:
                 pagination.count_total = count_total
                 query.pagination.CopyFrom(pagination)
 
-            query_path = "/akash.market.v1beta4.Query/Bids"
+            query_path = "/akash.market.v1beta5.Query/Bids"
             query_data = query.SerializeToString()
 
             result = self.akash_client.abci_query(
@@ -232,7 +234,7 @@ class MarketQuery:
                 logger.info("Query succeeded but returned no bids (empty result)")
                 return []
 
-            from akash.proto.akash.market.v1beta4.query_pb2 import QueryBidsResponse
+            from akash.proto.akash.market.v1beta5.query_pb2 import QueryBidsResponse
             import base64
 
             try:
@@ -368,8 +370,9 @@ class MarketQuery:
             List of lease information with state converted to string
         """
         try:
-            from akash.proto.akash.market.v1beta4.query_pb2 import QueryLeasesRequest
-            from akash.proto.akash.market.v1beta4.lease_pb2 import LeaseFilters
+            from akash.proto.akash.market.v1beta5.query_pb2 import QueryLeasesRequest
+            # v1beta5: QueryLeasesRequest uses v1.LeaseFilters (not v1beta5)
+            from akash.proto.akash.market.v1.filters_pb2 import LeaseFilters
             from akash.proto.cosmos.base.query.v1beta1.pagination_pb2 import PageRequest
 
             logger.info(
@@ -403,7 +406,7 @@ class MarketQuery:
                 pagination.count_total = count_total
                 query.pagination.CopyFrom(pagination)
 
-            query_path = "/akash.market.v1beta4.Query/Leases"
+            query_path = "/akash.market.v1beta5.Query/Leases"
             query_data = query.SerializeToString()
 
             result = self.akash_client.abci_query(
@@ -427,7 +430,7 @@ class MarketQuery:
                 logger.info("Query succeeded but returned no leases (empty result)")
                 return []
 
-            from akash.proto.akash.market.v1beta4.query_pb2 import QueryLeasesResponse
+            from akash.proto.akash.market.v1beta5.query_pb2 import QueryLeasesResponse
             import base64
 
             try:

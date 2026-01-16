@@ -53,7 +53,7 @@ class CertTx:
                 raise TypeError(f"public_key must be bytes, got {type(public_key)}")
 
             msg = {
-                "@type": "/akash.cert.v1beta3.MsgCreateCertificate",
+                "@type": "/akash.cert.v1.MsgCreateCertificate",
                 "owner": wallet.address,
                 "cert": base64.b64encode(cert_data).decode(),
                 "pubkey": base64.b64encode(public_key).decode(),
@@ -258,7 +258,7 @@ class CertTx:
             logger.info(f"Publishing server certificate for {wallet.address}")
 
             msg = {
-                "@type": "/akash.cert.v1beta3.MsgCreateCertificate",
+                "@type": "/akash.cert.v1.MsgCreateCertificate",
                 "owner": wallet.address,
                 "cert": base64.b64encode(cert_data).decode(),
                 "pubkey": base64.b64encode(public_key).decode(),
@@ -312,7 +312,7 @@ class CertTx:
             logger.info(f"Revoking client certificate {serial} for {wallet.address}")
 
             msg = {
-                "@type": "/akash.cert.v1beta3.MsgRevokeCertificate",
+                "@type": "/akash.cert.v1.MsgRevokeCertificate",
                 "id": {"owner": wallet.address, "serial": serial},
             }
 
@@ -364,7 +364,7 @@ class CertTx:
             logger.info(f"Revoking server certificate {serial} for {wallet.address}")
 
             msg = {
-                "@type": "/akash.cert.v1beta3.MsgRevokeCertificate",
+                "@type": "/akash.cert.v1.MsgRevokeCertificate",
                 "id": {"owner": wallet.address, "serial": serial},
             }
 

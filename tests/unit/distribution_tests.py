@@ -657,6 +657,29 @@ class TestDistributionErrorHandlingScenarios:
             self.client.get_delegator_rewards("invalid_format")
 
 
+class TestDistributionQueryMissingCoverage:
+    """Test previously uncovered distribution query functions."""
+
+    def test_query_validator_outstanding_rewards_response_structure(self):
+        """Test QueryValidatorOutstandingRewardsResponse structure."""
+        response = dist_query.QueryValidatorOutstandingRewardsResponse()
+
+        assert hasattr(response, 'rewards'), "QueryValidatorOutstandingRewardsResponse missing rewards field"
+
+    def test_query_community_pool_response_structure(self):
+        """Test QueryCommunityPoolResponse structure."""
+        response = dist_query.QueryCommunityPoolResponse()
+
+        assert hasattr(response, 'pool'), "QueryCommunityPoolResponse missing pool field"
+
+    def test_query_validator_slashes_response_structure(self):
+        """Test QueryValidatorSlashesResponse structure."""
+        response = dist_query.QueryValidatorSlashesResponse()
+
+        assert hasattr(response, 'slashes'), "QueryValidatorSlashesResponse missing slashes field"
+        assert hasattr(response, 'pagination'), "QueryValidatorSlashesResponse missing pagination field"
+
+
 if __name__ == '__main__':
     print("Running distribution module validation tests")
     print("=" * 70)

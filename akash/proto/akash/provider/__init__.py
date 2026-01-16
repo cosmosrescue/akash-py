@@ -1,1 +1,0 @@
-# Akash provider protobuf modules

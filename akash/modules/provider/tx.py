@@ -46,7 +46,7 @@ class ProviderTx:
             logger.info(f"Creating provider for {wallet.address}")
 
             msg_create_provider = {
-                "@type": "/akash.provider.v1beta3.MsgCreateProvider",
+                "@type": "/akash.provider.v1beta4.MsgCreateProvider",
                 "owner": wallet.address,
                 "host_uri": host_uri,
                 "attributes": [
@@ -108,7 +108,7 @@ class ProviderTx:
             logger.info(f"Updating provider for {wallet.address}")
 
             msg_update_provider = {
-                "@type": "/akash.provider.v1beta3.MsgUpdateProvider",
+                "@type": "/akash.provider.v1beta4.MsgUpdateProvider",
                 "owner": wallet.address,
                 "host_uri": host_uri,
                 "attributes": [

@@ -747,6 +747,18 @@ class TestGovernanceErrorScenarios:
         """Test governance parameter validation."""
 
 
+class TestGovernanceQueryMissingCoverage:
+    """Test previously uncovered governance query functions."""
+
+    def test_query_params_response_structure(self):
+        """Test QueryParamsResponse structure for get_governance_params."""
+        response = gov_query.QueryParamsResponse()
+
+        assert hasattr(response, 'voting_params'), "QueryParamsResponse missing voting_params field"
+        assert hasattr(response, 'deposit_params'), "QueryParamsResponse missing deposit_params field"
+        assert hasattr(response, 'tally_params'), "QueryParamsResponse missing tally_params field"
+
+
 if __name__ == '__main__':
     print("✅ Running gov module validation tests")
     print("=" * 70)

@@ -2,7 +2,7 @@ import base64
 import logging
 from typing import Dict, List, Any, Optional
 
-from akash.proto.akash.audit.v1beta3 import query_pb2 as audit_query_pb2
+from akash.proto.akash.audit.v1 import query_pb2 as audit_query_pb2
 from akash.proto.cosmos.base.query.v1beta1 import pagination_pb2 as pagination_pb2
 
 logger = logging.getLogger(__name__)
@@ -46,7 +46,7 @@ class AuditQuery:
                     page_request.count_total = count_total
                 request.pagination.CopyFrom(page_request)
 
-            path = "/akash.audit.v1beta3.Query/AllProvidersAttributes"
+            path = "/akash.audit.v1.Query/AllProvidersAttributes"
             result = self.akash_client.rpc_query(
                 "abci_query",
                 [path, request.SerializeToString().hex().upper(), "0", False],
@@ -144,7 +144,7 @@ class AuditQuery:
                     page_request.key = pagination["key"]
                 request.pagination.CopyFrom(page_request)
 
-            path = "/akash.audit.v1beta3.Query/ProviderAttributes"
+            path = "/akash.audit.v1.Query/ProviderAttributes"
             result = self.akash_client.rpc_query(
                 "abci_query",
                 [path, request.SerializeToString().hex().upper(), "0", False],
@@ -213,7 +213,7 @@ class AuditQuery:
             request = audit_query_pb2.QueryProviderAuditorRequest()
             request.auditor = auditor
             request.owner = owner
-            path = "/akash.audit.v1beta3.Query/ProviderAuditorAttributes"
+            path = "/akash.audit.v1.Query/ProviderAuditorAttributes"
 
             result = self.akash_client.rpc_query(
                 "abci_query",
@@ -298,7 +298,7 @@ class AuditQuery:
                     page_request.key = pagination["key"]
                 request.pagination.CopyFrom(page_request)
 
-            path = "/akash.audit.v1beta3.Query/AuditorAttributes"
+            path = "/akash.audit.v1.Query/AuditorAttributes"
             result = self.akash_client.rpc_query(
                 "abci_query",
                 [path, request.SerializeToString().hex().upper(), "0", False],

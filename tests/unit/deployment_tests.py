@@ -19,13 +19,13 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from akash.proto.akash.deployment.v1beta3 import deploymentmsg_pb2 as deploy_msg
-from akash.proto.akash.deployment.v1beta3 import groupmsg_pb2 as group_msg
-from akash.proto.akash.deployment.v1beta3 import deployment_pb2 as deploy_pb
-from akash.proto.akash.deployment.v1beta3 import group_pb2 as group_pb
-from akash.proto.akash.deployment.v1beta3 import groupid_pb2 as group_id
-from akash.proto.akash.deployment.v1beta3 import query_pb2 as deploy_query
-from akash.proto.akash.deployment.v1beta3 import resourceunit_pb2 as resource_pb
+from akash.proto.akash.deployment.v1beta4 import deploymentmsg_pb2 as deploy_msg
+from akash.proto.akash.deployment.v1beta4 import groupmsg_pb2 as group_msg
+from akash.proto.akash.deployment.v1 import deployment_pb2 as deploy_pb
+from akash.proto.akash.deployment.v1beta4 import group_pb2 as group_pb
+from akash.proto.akash.deployment.v1 import group_pb2 as group_id
+from akash.proto.akash.deployment.v1beta4 import query_pb2 as deploy_query
+from akash.proto.akash.deployment.v1beta4 import resourceunit_pb2 as resource_pb
 from akash.proto.akash.base.v1beta3 import cpu_pb2 as cpu_pb
 from akash.proto.akash.base.v1beta3 import memory_pb2 as memory_pb
 from akash.proto.akash.base.v1beta3 import storage_pb2 as storage_pb
@@ -51,12 +51,13 @@ class TestDeploymentMessageStructures:
         """Test Deployment message structure and field access."""
         deployment = deploy_pb.Deployment()
 
-        required_fields = ['deployment_id', 'state', 'version', 'created_at']
+        # v1: deployment_id renamed to id, version renamed to hash
+        required_fields = ['id', 'state', 'hash', 'created_at']
         for field in required_fields:
             assert hasattr(deployment, field), f"Deployment missing field: {field}"
 
-        assert hasattr(deployment.deployment_id, 'owner')
-        assert hasattr(deployment.deployment_id, 'dseq')
+        assert hasattr(deployment.id, 'owner')
+        assert hasattr(deployment.id, 'dseq')
 
     def test_group_id_structure(self):
         """Test GroupID message structure and field access."""
@@ -70,13 +71,14 @@ class TestDeploymentMessageStructures:
         """Test Group message structure and field access."""
         group = group_pb.Group()
 
-        required_fields = ['group_id', 'state', 'group_spec', 'created_at']
+        # v1beta4: group_id renamed to id
+        required_fields = ['id', 'state', 'group_spec', 'created_at']
         for field in required_fields:
             assert hasattr(group, field), f"Group missing field: {field}"
 
-        assert hasattr(group.group_id, 'owner')
-        assert hasattr(group.group_id, 'dseq')
-        assert hasattr(group.group_id, 'gseq')
+        assert hasattr(group.id, 'owner')
+        assert hasattr(group.id, 'dseq')
+        assert hasattr(group.id, 'gseq')
 
     def test_resource_structure(self):
         """Test Resource and ResourceUnit structures."""
@@ -109,15 +111,17 @@ class TestDeploymentQueryResponses:
         assert hasattr(response, 'deployments'), "QueryDeploymentsResponse missing deployments field"
 
         deployment_response = deploy_query.QueryDeploymentResponse()
-        deployment_response.deployment.deployment_id.owner = "akash1test"
-        deployment_response.deployment.deployment_id.dseq = 12345
+        # v1: deployment_id renamed to id
+        deployment_response.deployment.id.owner = "akash1test"
+        deployment_response.deployment.id.dseq = 12345
         deployment_response.deployment.state = 1  # Active
 
         response.deployments.append(deployment_response)
 
         first_deployment_response = response.deployments[0]
         assert hasattr(first_deployment_response, 'deployment'), "QueryDeploymentResponse missing deployment field"
-        assert first_deployment_response.deployment.deployment_id.owner == "akash1test"
+        # v1: deployment_id renamed to id
+        assert first_deployment_response.deployment.id.owner == "akash1test"
 
         assert not hasattr(first_deployment_response,
                            'state'), "QueryDeploymentResponse should NOT have direct state field"
@@ -143,17 +147,19 @@ class TestDeploymentQueryResponses:
         assert hasattr(response, 'group'), "QueryGroupResponse missing group field"
 
         group = group_pb.Group()
-        group.group_id.owner = "akash1test"
-        group.group_id.dseq = 12345
-        group.group_id.gseq = 1
+        # v1beta4: group_id renamed to id
+        group.id.owner = "akash1test"
+        group.id.dseq = 12345
+        group.id.gseq = 1
         group.state = 1
 
         response.group.CopyFrom(group)
 
         first_group = response.group
-        assert hasattr(first_group, 'group_id'), "Group missing group_id field"
+        # v1beta4: group_id renamed to id
+        assert hasattr(first_group, 'id'), "Group missing id field"
         assert hasattr(first_group, 'state'), "Group missing state field"
-        assert first_group.group_id.owner == "akash1test"
+        assert first_group.id.owner == "akash1test"
 
 
 class TestDeploymentMessageConverters:
@@ -167,13 +173,13 @@ class TestDeploymentMessageConverters:
             _initialize_message_converters()
 
         required_converters = [
-            "/akash.deployment.v1beta3.MsgCreateDeployment",
-            "/akash.deployment.v1beta3.MsgUpdateDeployment",
-            "/akash.deployment.v1beta3.MsgCloseDeployment",
-            "/akash.deployment.v1beta3.MsgDepositDeployment",
-            "/akash.deployment.v1beta3.MsgCloseGroup",
-            "/akash.deployment.v1beta3.MsgPauseGroup",
-            "/akash.deployment.v1beta3.MsgStartGroup"
+            "/akash.deployment.v1beta4.MsgCreateDeployment",
+            "/akash.deployment.v1beta4.MsgUpdateDeployment",
+            "/akash.deployment.v1beta4.MsgCloseDeployment",
+            # Note: MsgDepositDeployment removed in v1beta4
+            "/akash.deployment.v1beta4.MsgCloseGroup",
+            "/akash.deployment.v1beta4.MsgPauseGroup",
+            "/akash.deployment.v1beta4.MsgStartGroup"
         ]
 
         for msg_type in required_converters:
@@ -185,7 +191,8 @@ class TestDeploymentMessageConverters:
         """Test MsgCreateDeployment protobuf field compatibility."""
         pb_msg = deploy_msg.MsgCreateDeployment()
 
-        required_fields = ['id', 'groups', 'version', 'deposit', 'depositor']
+        # v1beta4: version renamed to hash, depositor removed
+        required_fields = ['id', 'groups', 'hash', 'deposit']
         for field in required_fields:
             assert hasattr(pb_msg, field), f"MsgCreateDeployment missing field: {field}"
 
@@ -195,15 +202,10 @@ class TestDeploymentMessageConverters:
         assert hasattr(pb_msg, 'groups')
 
     def test_msg_deposit_deployment_protobuf_compatibility(self):
-        """Test MsgDepositDeployment protobuf field compatibility."""
-        pb_msg = deploy_msg.MsgDepositDeployment()
-
-        required_fields = ['id', 'amount', 'depositor']
-        for field in required_fields:
-            assert hasattr(pb_msg, field), f"MsgDepositDeployment missing field: {field}"
-
-        assert hasattr(pb_msg.id, 'owner')
-        assert hasattr(pb_msg.id, 'dseq')
+        """Test MsgDepositDeployment was removed in v1beta4."""
+        # v1beta4: MsgDepositDeployment was removed, deposit is now part of MsgCreateDeployment
+        assert not hasattr(deploy_msg, 'MsgDepositDeployment'), \
+            "MsgDepositDeployment should not exist in v1beta4"
 
     def test_msg_close_group_protobuf_compatibility(self):
         """Test MsgCloseGroup protobuf field compatibility."""
@@ -239,7 +241,8 @@ class TestDeploymentTransactionMessages:
     def test_all_deployment_message_types_exist(self):
         """Test all expected deployment message types exist."""
         deployment_messages = [
-            'MsgCreateDeployment', 'MsgUpdateDeployment', 'MsgCloseDeployment', 'MsgDepositDeployment'
+            # v1beta4: MsgDepositDeployment removed
+            'MsgCreateDeployment', 'MsgUpdateDeployment', 'MsgCloseDeployment'
         ]
         for msg_name in deployment_messages:
             assert hasattr(deploy_msg, msg_name), f"Missing deployment message type: {msg_name}"
@@ -297,15 +300,13 @@ class TestDeploymentErrorPatterns:
         assert escrow_account is not None
 
     def test_decimal_coin_structure_compatibility(self):
-        """Test DecCoin structure for escrow balances."""
+        """Test escrow account structure."""
         response = deploy_query.QueryDeploymentResponse()
 
-        balance = response.escrow_account.balance
-        balance.denom = "uakt"
-        balance.amount = "5000000000000000000000000"  # 5 AKT with 18 decimal precision
-
-        assert balance.denom == "uakt"
-        assert balance.amount == "5000000000000000000000000"
+        # v1: Account structure changed, no longer has direct balance field
+        escrow_account = response.escrow_account
+        assert hasattr(escrow_account, 'id')
+        assert hasattr(escrow_account, 'state')
 
 
 class TestDeploymentModuleIntegration:
@@ -351,7 +352,7 @@ class TestDeploymentModuleIntegration:
                 msg_classes.append(attr_name)
 
         for msg_class in msg_classes:
-            converter_key = f"/akash.deployment.v1beta3.{msg_class}"
+            converter_key = f"/akash.deployment.v1beta4.{msg_class}"
             assert converter_key in _MESSAGE_CONVERTERS, f"Missing converter for: {msg_class}"
 
     def test_deployment_query_consistency(self):
@@ -365,7 +366,8 @@ class TestDeploymentModuleIntegration:
         single_deployment = single_response.deployment
         multi_deployment = multi_response.deployments[0].deployment
 
-        deployment_fields = ['deployment_id', 'state', 'version', 'created_at']
+        # v1: deployment_id renamed to id, version renamed to hash
+        deployment_fields = ['id', 'state', 'hash', 'created_at']
         for field in deployment_fields:
             assert hasattr(single_deployment, field), f"Single query deployment missing: {field}"
             assert hasattr(multi_deployment, field), f"Multi query deployment missing: {field}"
@@ -436,11 +438,12 @@ class TestDeploymentQueryOperations:
         }
         self.mock_akash_client.abci_query.return_value = mock_response
 
-        with patch('akash.proto.akash.deployment.v1beta3.query_pb2.QueryDeploymentsResponse') as MockResponse:
+        with patch('akash.proto.akash.deployment.v1beta4.query_pb2.QueryDeploymentsResponse') as MockResponse:
             mock_response_obj = Mock()
             mock_deployment_resp = Mock()
-            mock_deployment_resp.deployment.deployment_id.owner = "akash1test"
-            mock_deployment_resp.deployment.deployment_id.dseq = 12345
+            # v1: deployment_id renamed to id
+            mock_deployment_resp.deployment.id.owner = "akash1test"
+            mock_deployment_resp.deployment.id.dseq = 12345
             mock_deployment_resp.deployment.state = 1  # Active
             mock_response_obj.deployments = [mock_deployment_resp]
             MockResponse.return_value = mock_response_obj
@@ -458,7 +461,7 @@ class TestDeploymentQueryOperations:
         }
         self.mock_akash_client.abci_query.return_value = mock_response
 
-        with patch('akash.proto.akash.deployment.v1beta3.query_pb2.QueryDeploymentsResponse'):
+        with patch('akash.proto.akash.deployment.v1beta4.query_pb2.QueryDeploymentsResponse'):
             result = self.client.get_deployments(owner="akash1test")
             self.mock_akash_client.abci_query.assert_called_once()
 
@@ -472,7 +475,7 @@ class TestDeploymentQueryOperations:
         }
         self.mock_akash_client.abci_query.return_value = mock_response
 
-        with patch('akash.proto.akash.deployment.v1beta3.query_pb2.QueryDeploymentsResponse'):
+        with patch('akash.proto.akash.deployment.v1beta4.query_pb2.QueryDeploymentsResponse'):
             result = self.client.get_deployments(limit=10, offset=5, count_total=True)
             self.mock_akash_client.abci_query.assert_called_once()
 

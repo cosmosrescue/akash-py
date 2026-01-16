@@ -3,7 +3,7 @@ import logging
 import requests
 from typing import Dict, List, Any, Optional
 
-from akash.proto.akash.provider.v1beta3 import query_pb2 as provider_query_pb2
+from akash.proto.akash.provider.v1beta4 import query_pb2 as provider_query_pb2
 from akash.proto.cosmos.base.query.v1beta1 import pagination_pb2 as pagination_pb2
 from ..market.query import MarketQuery
 
@@ -47,7 +47,7 @@ class ProviderQuery(MarketQuery):
                     pagination.count_total = count_total
                 query.pagination.CopyFrom(pagination)
 
-            query_path = "/akash.provider.v1beta3.Query/Providers"
+            query_path = "/akash.provider.v1beta4.Query/Providers"
             result = self.akash_client.rpc_query(
                 "abci_query",
                 [query_path, query.SerializeToString().hex().upper(), "0", False],
@@ -113,7 +113,7 @@ class ProviderQuery(MarketQuery):
 
             query = provider_query_pb2.QueryProviderRequest()
             query.owner = owner_address
-            query_path = "/akash.provider.v1beta3.Query/Provider"
+            query_path = "/akash.provider.v1beta4.Query/Provider"
 
             result = self.akash_client.rpc_query(
                 "abci_query",

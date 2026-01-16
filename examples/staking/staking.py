@@ -11,6 +11,13 @@ Shows how to use the Akash Python SDK for staking operations including:
 
 import sys
 import time
+from pathlib import Path
+
+# Development mode: Use local akash if running from repo
+examples_dir = Path(__file__).parent.parent
+if (examples_dir.parent / "akash").exists() and (examples_dir.parent / "pyproject.toml").exists():
+    sys.path.insert(0, str(examples_dir.parent))
+    print("✓ Development mode: Using local akash")
 
 try:
     from akash import AkashClient, AkashWallet

@@ -1,1 +1,0 @@
-# Akash market protobuf modules

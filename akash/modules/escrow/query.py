@@ -25,11 +25,11 @@ class EscrowQuery:
         try:
             import base64
             from decimal import Decimal
-            from akash.proto.akash.market.v1beta4.query_pb2 import (
+            from akash.proto.akash.market.v1beta5.query_pb2 import (
                 QueryLeasesRequest,
                 QueryLeasesResponse,
             )
-            from akash.proto.akash.deployment.v1beta3.query_pb2 import (
+            from akash.proto.akash.deployment.v1beta4.query_pb2 import (
                 QueryDeploymentRequest,
                 QueryDeploymentResponse,
             )
@@ -45,7 +45,7 @@ class EscrowQuery:
             request_hex = request_bytes.hex().upper()
 
             result = self.akash_client.abci_query(
-                path="/akash.market.v1beta4.Query/Leases", data=request_hex
+                path="/akash.market.v1beta5.Query/Leases", data=request_hex
             )
 
             if not result or "response" not in result:
@@ -114,7 +114,7 @@ class EscrowQuery:
             request_hex = request_bytes.hex().upper()
 
             result = self.akash_client.abci_query(
-                path="/akash.deployment.v1beta3.Query/Deployment", data=request_hex
+                path="/akash.deployment.v1beta4.Query/Deployment", data=request_hex
             )
 
             if not result or "response" not in result:

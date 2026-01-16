@@ -630,7 +630,7 @@ class DeploymentUtils:
             dict: Message dictionary for MsgCloseDeployment
         """
         return {
-            "@type": "/akash.deployment.v1beta3.MsgCloseDeployment",
+            "@type": "/akash.deployment.v1beta4.MsgCloseDeployment",
             "id": {"owner": owner, "dseq": str(dseq)},
         }
 
@@ -651,7 +651,7 @@ class DeploymentUtils:
             dict: Message dictionary for MsgDepositDeployment
         """
         return {
-            "@type": "/akash.deployment.v1beta3.MsgDepositDeployment",
+            "@type": "/akash.deployment.v1beta4.MsgDepositDeployment",
             "id": {"owner": owner, "dseq": str(dseq)},
             "amount": {"denom": denom, "amount": amount},
             "depositor": depositor,
@@ -670,7 +670,7 @@ class DeploymentUtils:
             dict: Message dictionary for MsgCloseGroup
         """
         return {
-            "@type": "/akash.deployment.v1beta3.MsgCloseGroup",
+            "@type": "/akash.deployment.v1beta4.MsgCloseGroup",
             "id": {"owner": owner, "dseq": str(dseq), "gseq": gseq},
         }
 
@@ -687,7 +687,7 @@ class DeploymentUtils:
             dict: Message dictionary for MsgPauseGroup
         """
         return {
-            "@type": "/akash.deployment.v1beta3.MsgPauseGroup",
+            "@type": "/akash.deployment.v1beta4.MsgPauseGroup",
             "id": {"owner": owner, "dseq": str(dseq), "gseq": gseq},
         }
 
@@ -704,7 +704,7 @@ class DeploymentUtils:
             dict: Message dictionary for MsgStartGroup
         """
         return {
-            "@type": "/akash.deployment.v1beta3.MsgStartGroup",
+            "@type": "/akash.deployment.v1beta4.MsgStartGroup",
             "id": {"owner": owner, "dseq": str(dseq), "gseq": gseq},
         }
 

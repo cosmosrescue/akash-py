@@ -10,10 +10,17 @@ import datetime
 import os
 import sys
 import time
+from pathlib import Path
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.x509.oid import NameOID
+
+# Development mode: Use local akash if running from repo
+examples_dir = Path(__file__).parent.parent
+if (examples_dir.parent / "akash").exists() and (examples_dir.parent / "pyproject.toml").exists():
+    sys.path.insert(0, str(examples_dir.parent))
+    print("✓ Development mode: Using local akash")
 
 try:
     from akash import AkashClient, AkashWallet

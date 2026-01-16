@@ -32,7 +32,7 @@ class MarketTx:
             logger.info(f"Creating bid for deployment {dseq}")
 
             msg_create_bid = {
-                "@type": "/akash.market.v1beta4.MsgCreateBid",
+                "@type": "/akash.market.v1beta5.MsgCreateBid",
                 "order": {
                     "owner": owner,
                     "dseq": str(dseq),
@@ -101,7 +101,7 @@ class MarketTx:
             logger.info(f"Closing bid for deployment {dseq}")
 
             msg_close_bid = {
-                "@type": "/akash.market.v1beta4.MsgCloseBid",
+                "@type": "/akash.market.v1beta5.MsgCloseBid",
                 "id": {
                     "owner": owner,
                     "dseq": str(dseq),
@@ -166,7 +166,7 @@ class MarketTx:
             logger.info(f"Creating lease for deployment {dseq}")
 
             msg_create_lease = {
-                "@type": "/akash.market.v1beta4.MsgCreateLease",
+                "@type": "/akash.market.v1beta5.MsgCreateLease",
                 "owner": owner,
                 "dseq": dseq,
                 "gseq": gseq,
@@ -230,7 +230,7 @@ class MarketTx:
             logger.info(f"Closing lease for deployment {dseq}")
 
             msg_close_lease = {
-                "@type": "/akash.market.v1beta4.MsgCloseLease",
+                "@type": "/akash.market.v1beta5.MsgCloseLease",
                 "id": {
                     "owner": owner,
                     "dseq": str(dseq),
@@ -296,7 +296,7 @@ class MarketTx:
             logger.info(f"Withdrawing from lease for deployment {dseq}")
 
             msg_withdraw_lease = {
-                "@type": "/akash.market.v1beta4.MsgWithdrawLease",
+                "@type": "/akash.market.v1beta5.MsgWithdrawLease",
                 "id": {
                     "owner": owner,
                     "dseq": str(dseq),

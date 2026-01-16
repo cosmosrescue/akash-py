@@ -635,6 +635,125 @@ class TestAkashWalletErrorHandling:
             pass
 
 
+class TestAkashWalletImports:
+    """Test that ALL wallet module imports actually work (not mocked)."""
+
+    def test_all_module_imports(self):
+        """Verify ALL wallet dependencies import successfully."""
+        # Standard library imports
+        import hashlib
+        import hmac
+        import logging
+        import struct
+        import json
+        from typing import Dict, List, Optional, Tuple, Any
+
+        # Third-party cryptographic libraries
+        import bech32
+        from ecdsa import SigningKey, VerifyingKey, SECP256k1
+        from ecdsa.util import sigencode_string_canonize
+        from mnemonic import Mnemonic
+
+        # Internal imports
+        from akash.modules.auth.utils import validate_address
+
+        # Conditional import (RIPEMD160) - test both methods
+        try:
+            from Crypto.Hash import RIPEMD160
+            # Test it works
+            test_hash = RIPEMD160.new(b"test")
+            assert test_hash is not None
+        except ImportError:
+            # Fallback to hashlib
+            test_hash = hashlib.new("ripemd160", b"test")
+            assert test_hash is not None
+
+        # All imports succeeded if we reach here
+        assert True
+
+    def test_cryptographic_primitives(self):
+        """Verify cryptographic primitives work correctly."""
+        from ecdsa import SigningKey, VerifyingKey, SECP256k1
+        from ecdsa.util import sigencode_string_canonize
+        import hashlib
+
+        # Test SECP256k1 key generation
+        test_private_key = b'\x01' * 32
+        signing_key = SigningKey.from_string(test_private_key, curve=SECP256k1)
+        assert signing_key is not None
+
+        # Test verifying key derivation
+        verifying_key = signing_key.verifying_key
+        assert verifying_key is not None
+        assert isinstance(verifying_key, VerifyingKey)
+
+        # Test compressed public key format
+        compressed_pubkey = verifying_key.to_string("compressed")
+        assert len(compressed_pubkey) == 33
+        assert compressed_pubkey[0] in [0x02, 0x03]
+
+        # Test signing with canonical encoding
+        test_data = b"test message"
+        test_hash = hashlib.sha256(test_data).digest()
+        signature = signing_key.sign_deterministic(
+            test_hash,
+            hashfunc=hashlib.sha256,
+            sigencode=sigencode_string_canonize
+        )
+        assert signature is not None
+        assert isinstance(signature, bytes)
+
+    def test_bip39_mnemonic_functionality(self):
+        """Verify BIP39 mnemonic library works correctly."""
+        from mnemonic import Mnemonic
+
+        # Test mnemonic generation
+        mnemo = Mnemonic("english")
+        mnemonic_12 = mnemo.generate(strength=128)
+        assert len(mnemonic_12.split()) == 12
+
+        # Test mnemonic validation
+        valid_mnemonic = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
+        assert mnemo.check(valid_mnemonic) is True
+
+        invalid_mnemonic = "invalid mnemonic phrase"
+        assert mnemo.check(invalid_mnemonic) is False
+
+        # Test seed generation
+        seed = mnemo.to_seed(valid_mnemonic, "")
+        assert isinstance(seed, bytes)
+        assert len(seed) == 64
+
+    def test_bech32_encoding(self):
+        """Verify bech32 library works correctly."""
+        import bech32
+
+        # Test bech32 encoding
+        test_data = b'\x00' * 20
+        converted = bech32.convertbits(test_data, 8, 5)
+        assert converted is not None
+
+        encoded = bech32.bech32_encode("akash", converted)
+        assert encoded.startswith("akash1")
+
+        # Test decoding
+        hrp, decoded = bech32.bech32_decode(encoded)
+        assert hrp == "akash"
+        assert decoded is not None
+
+    def test_address_validation_import(self):
+        """Verify auth.utils.validate_address import works."""
+        from akash.modules.auth.utils import validate_address
+
+        # Test with valid address
+        valid_address = "akash1qnnhhgzxj24f2kld5yhy4v4h4s9r295ak5gjw4"
+        assert validate_address(valid_address) is True
+
+        # Test with invalid address
+        invalid_address = "invalid_address"
+        assert validate_address(invalid_address) is False
+
+
 class TestAkashWalletCryptographicProperties:
     """Test cryptographic properties and security."""
 

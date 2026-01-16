@@ -7,7 +7,8 @@ Converts dictionary representations to protobuf messages for provider operations
 
 def convert_msg_create_provider(msg_dict, any_msg):
     """Convert MsgCreateProvider dictionary to protobuf."""
-    from akash.proto.akash.provider.v1beta3.provider_pb2 import MsgCreateProvider
+    # v1beta4: Msg types moved to msg_pb2
+    from akash.proto.akash.provider.v1beta4.msg_pb2 import MsgCreateProvider
 
     pb_msg = MsgCreateProvider()
     pb_msg.owner = msg_dict.get("owner", "")
@@ -29,7 +30,8 @@ def convert_msg_create_provider(msg_dict, any_msg):
 
 def convert_msg_update_provider(msg_dict, any_msg):
     """Convert MsgUpdateProvider dictionary to protobuf."""
-    from akash.proto.akash.provider.v1beta3.provider_pb2 import MsgUpdateProvider
+    # v1beta4: Msg types moved to msg_pb2
+    from akash.proto.akash.provider.v1beta4.msg_pb2 import MsgUpdateProvider
 
     pb_msg = MsgUpdateProvider()
     pb_msg.owner = msg_dict.get("owner", "")

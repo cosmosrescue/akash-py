@@ -1,1 +1,0 @@
-# IBC transfer application module

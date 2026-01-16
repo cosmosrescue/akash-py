@@ -29,6 +29,7 @@ if proto_path not in sys.path:
 try:
     import ibc.applications.transfer.v1.query_pb2 as transfer_query
     import ibc.applications.transfer.v1.transfer_pb2 as transfer_types
+    import ibc.applications.transfer.v1.denomtrace_pb2 as denom_trace_types
 
     PROTOBUF_AVAILABLE = True
 except Exception as e:
@@ -42,18 +43,21 @@ class TestIBCProtobufStructures:
     @pytest.mark.skipif(not PROTOBUF_AVAILABLE, reason=pytest_skip_reason if not PROTOBUF_AVAILABLE else "")
     def test_transfer_query_structures(self):
         """Test IBC transfer query structures."""
-        denom_traces_req = transfer_query.QueryDenomTracesRequest()
-        assert hasattr(denom_traces_req, 'pagination')
+        # IBC-go v10.3.0: QueryDenomTracesRequest renamed to QueryDenomsRequest
+        denoms_req = transfer_query.QueryDenomsRequest()
+        assert hasattr(denoms_req, 'pagination')
 
-        denom_trace_req = transfer_query.QueryDenomTraceRequest()
-        denom_trace_req.hash = "test-hash-abc123"
-        assert denom_trace_req.hash == "test-hash-abc123"
+        # IBC-go v10.3.0: QueryDenomTraceRequest renamed to QueryDenomRequest
+        denom_req = transfer_query.QueryDenomRequest()
+        denom_req.hash = "test-hash-abc123"
+        assert denom_req.hash == "test-hash-abc123"
 
     @pytest.mark.skipif(not PROTOBUF_AVAILABLE, reason=pytest_skip_reason if not PROTOBUF_AVAILABLE else "")
     def test_transfer_types_structures(self):
         """Test IBC transfer type structures."""
 
-        denom_trace = transfer_types.DenomTrace()
+        # IBC-go v10.3.0: DenomTrace moved to denomtrace_pb2
+        denom_trace = denom_trace_types.DenomTrace()
         denom_trace.path = "transfer/channel-0"
         denom_trace.base_denom = "uatom"
 
@@ -69,9 +73,10 @@ class TestIBCProtobufStructures:
     @pytest.mark.skipif(not PROTOBUF_AVAILABLE, reason=pytest_skip_reason if not PROTOBUF_AVAILABLE else "")
     def test_protobuf_descriptor_validation(self):
         """Validate that protobuf classes have proper descriptors (not fake)."""
+        # IBC-go v10.3.0: Updated class names
         classes_to_test = [
-            transfer_query.QueryDenomTracesRequest,
-            transfer_types.DenomTrace,
+            transfer_query.QueryDenomsRequest,
+            denom_trace_types.DenomTrace,
             transfer_types.Params
         ]
 
@@ -225,6 +230,7 @@ class TestIBCImplementationValidation:
         import os
         proto_base = os.path.join(os.path.dirname(__file__), '..', '..', 'akash', 'proto', 'ibc')
 
+        # v1: IBC query protos are optional - SDK uses REST API for IBC queries
         expected_proto_files = [
             'applications/transfer/v1/query_pb2.py',
             'applications/transfer/v1/transfer_pb2.py',
@@ -233,6 +239,7 @@ class TestIBCImplementationValidation:
             'core/connection/v1/query_pb2.py'
         ]
 
+        # ALL IBC proto files MUST exist - no skipping
         for proto_file in expected_proto_files:
             file_path = os.path.join(proto_base, proto_file)
             assert os.path.exists(file_path), f"IBC protobuf file missing: {proto_file}"

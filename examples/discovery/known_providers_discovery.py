@@ -5,11 +5,19 @@ Test connectivity to known working Akash providers.
 
 import json
 import sys
+from pathlib import Path
+
+# Development mode: Use local akash if running from repo
+examples_dir = Path(__file__).parent.parent
+if (examples_dir.parent / "akash").exists() and (examples_dir.parent / "pyproject.toml").exists():
+    sys.path.insert(0, str(examples_dir.parent))
+    print("✓ Development mode: Using local akash")
 
 try:
     from akash import AkashClient
 except ImportError as e:
     print(f"Failed to import akash SDK: {e}")
+    print("Please run: pip install -r requirements.txt")
     sys.exit(1)
 
 MAINNET_RPC = "https://akash-rpc.polkachu.com:443"

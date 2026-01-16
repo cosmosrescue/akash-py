@@ -22,7 +22,7 @@ def encode_msg_create_certificate(msg_data: Dict[str, Any], msg_bytes=None) -> b
         bytes: Encoded message
     """
     try:
-        from akash.proto.akash.cert.v1beta3.cert_pb2 import MsgCreateCertificate
+        from akash.proto.akash.cert.v1.cert_pb2 import MsgCreateCertificate
 
         msg = MsgCreateCertificate()
         msg.owner = msg_data["owner"]
@@ -32,7 +32,7 @@ def encode_msg_create_certificate(msg_data: Dict[str, Any], msg_bytes=None) -> b
         from google.protobuf.any_pb2 import Any
 
         any_msg = Any()
-        any_msg.type_url = "/akash.cert.v1beta3.MsgCreateCertificate"
+        any_msg.type_url = "/akash.cert.v1.MsgCreateCertificate"
         any_msg.value = msg.SerializeToString()
 
         logger.debug(
@@ -59,14 +59,15 @@ def encode_msg_revoke_certificate(msg_data: Dict[str, Any], msg_bytes=None) -> b
         bytes: Encoded message
     """
     try:
-        from akash.proto.akash.cert.v1beta3.cert_pb2 import (
+        from akash.proto.akash.cert.v1.cert_pb2 import (
             MsgRevokeCertificate,
-            CertificateID,
+            ID,
         )
 
         msg = MsgRevokeCertificate()
 
-        cert_id = CertificateID()
+        # v1: CertificateID renamed to ID
+        cert_id = ID()
         cert_id.owner = msg_data["id"]["owner"]
         cert_id.serial = msg_data["id"]["serial"]
         msg.id.CopyFrom(cert_id)
@@ -74,7 +75,7 @@ def encode_msg_revoke_certificate(msg_data: Dict[str, Any], msg_bytes=None) -> b
         from google.protobuf.any_pb2 import Any
 
         any_msg = Any()
-        any_msg.type_url = "/akash.cert.v1beta3.MsgRevokeCertificate"
+        any_msg.type_url = "/akash.cert.v1.MsgRevokeCertificate"
         any_msg.value = msg.SerializeToString()
 
         logger.debug(

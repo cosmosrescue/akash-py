@@ -29,15 +29,19 @@ class TestMarketMessageStructures:
 
     def test_bid_message_structure(self):
         """Test Bid message structure and all field access patterns."""
-        from akash.proto.akash.market.v1beta4.bid_pb2 import Bid, BidID, BidFilters
+        from akash.proto.akash.market.v1beta5.bid_pb2 import Bid
+        from akash.proto.akash.market.v1.bid_pb2 import BidID
+        from akash.proto.akash.market.v1beta5.filters_pb2 import BidFilters
 
         bid = Bid()
-        assert hasattr(bid, 'bid_id')
+        # v1beta5: field renamed from bid_id to id
+        assert hasattr(bid, 'id')
         assert hasattr(bid, 'state')
         assert hasattr(bid, 'price')
         assert hasattr(bid, 'created_at')
         assert hasattr(bid, 'resources_offer')
 
+        # v1beta5: BidID moved to v1
         bid_id = BidID()
         assert hasattr(bid_id, 'owner')
         assert hasattr(bid_id, 'dseq')
@@ -55,15 +59,18 @@ class TestMarketMessageStructures:
 
     def test_lease_message_structure(self):
         """Test Lease message structure and all field access patterns."""
-        from akash.proto.akash.market.v1beta4.lease_pb2 import Lease, LeaseID, LeaseFilters
+        from akash.proto.akash.market.v1.lease_pb2 import Lease, LeaseID
+        from akash.proto.akash.market.v1beta4.lease_pb2 import LeaseFilters
 
         lease = Lease()
-        assert hasattr(lease, 'lease_id')
+        # v1: field renamed from lease_id to id
+        assert hasattr(lease, 'id')
         assert hasattr(lease, 'state')
         assert hasattr(lease, 'price')
         assert hasattr(lease, 'created_at')
         assert hasattr(lease, 'closed_on')
 
+        # v1: LeaseID moved to v1
         lease_id = LeaseID()
         assert hasattr(lease_id, 'owner')
         assert hasattr(lease_id, 'dseq')
@@ -71,6 +78,7 @@ class TestMarketMessageStructures:
         assert hasattr(lease_id, 'oseq')
         assert hasattr(lease_id, 'provider')
 
+        # LeaseFilters still in v1beta4
         lease_filters = LeaseFilters()
         assert hasattr(lease_filters, 'owner')
         assert hasattr(lease_filters, 'dseq')
@@ -81,14 +89,18 @@ class TestMarketMessageStructures:
 
     def test_order_message_structure(self):
         """Test Order message structure and all field access patterns."""
-        from akash.proto.akash.market.v1beta4.order_pb2 import Order, OrderID, OrderFilters
+        from akash.proto.akash.market.v1beta5.order_pb2 import Order
+        from akash.proto.akash.market.v1.order_pb2 import OrderID
+        from akash.proto.akash.market.v1beta5.filters_pb2 import OrderFilters
 
         order = Order()
-        assert hasattr(order, 'order_id')
+        # v1beta5: field renamed from order_id to id
+        assert hasattr(order, 'id')
         assert hasattr(order, 'state')
         assert hasattr(order, 'spec')
         assert hasattr(order, 'created_at')
 
+        # v1beta5: OrderID moved to v1
         order_id = OrderID()
         assert hasattr(order_id, 'owner')
         assert hasattr(order_id, 'dseq')
@@ -108,8 +120,8 @@ class TestMarketQueryResponseStructures:
 
     def test_query_bids_response_structure(self):
         """Test QueryBidsResponse → QueryBidResponse → Bid nesting."""
-        from akash.proto.akash.market.v1beta4.query_pb2 import QueryBidsResponse, QueryBidResponse
-        from akash.proto.akash.market.v1beta4.bid_pb2 import Bid
+        from akash.proto.akash.market.v1beta5.query_pb2 import QueryBidsResponse, QueryBidResponse
+        from akash.proto.akash.market.v1beta5.bid_pb2 import Bid
 
         bid_response = QueryBidResponse()
         bid_response.bid.CopyFrom(Bid())
@@ -129,12 +141,13 @@ class TestMarketQueryResponseStructures:
         actual_bid = first_bid_response.bid
         assert hasattr(actual_bid, 'price')
         assert hasattr(actual_bid, 'state')
-        assert hasattr(actual_bid, 'bid_id')
+        # v1beta5: field renamed from bid_id to id
+        assert hasattr(actual_bid, 'id')
 
     def test_query_leases_response_structure(self):
         """Test QueryLeasesResponse → QueryLeaseResponse → Lease nesting."""
-        from akash.proto.akash.market.v1beta4.query_pb2 import QueryLeasesResponse, QueryLeaseResponse
-        from akash.proto.akash.market.v1beta4.lease_pb2 import Lease
+        from akash.proto.akash.market.v1beta5.query_pb2 import QueryLeasesResponse, QueryLeaseResponse
+        from akash.proto.akash.market.v1.lease_pb2 import Lease
 
         lease_response = QueryLeaseResponse()
         lease_response.lease.CopyFrom(Lease())
@@ -152,12 +165,13 @@ class TestMarketQueryResponseStructures:
         actual_lease = first_lease_response.lease
         assert hasattr(actual_lease, 'price')
         assert hasattr(actual_lease, 'state')
-        assert hasattr(actual_lease, 'lease_id')
+        # v1: field renamed from lease_id to id
+        assert hasattr(actual_lease, 'id')
 
     def test_query_orders_response_structure(self):
         """Test QueryOrdersResponse → Order structure (direct, not nested)."""
-        from akash.proto.akash.market.v1beta4.query_pb2 import QueryOrdersResponse
-        from akash.proto.akash.market.v1beta4.order_pb2 import Order
+        from akash.proto.akash.market.v1beta5.query_pb2 import QueryOrdersResponse
+        from akash.proto.akash.market.v1beta5.order_pb2 import Order
 
         order = Order()
 
@@ -168,11 +182,12 @@ class TestMarketQueryResponseStructures:
 
         assert hasattr(first_order, 'spec'), "Order missing spec field"
         assert hasattr(first_order, 'state'), "Order missing state field"
-        assert hasattr(first_order, 'order_id'), "Order missing order_id field"
+        # v1beta5: field renamed from order_id to id
+        assert hasattr(first_order, 'id'), "Order missing id field"
 
     def test_single_item_query_responses(self):
         """Test single item query responses (GetBid, GetLease, etc.)."""
-        from akash.proto.akash.market.v1beta4.query_pb2 import (
+        from akash.proto.akash.market.v1beta5.query_pb2 import (
             QueryBidResponse, QueryLeaseResponse, QueryOrderResponse
         )
 
@@ -196,7 +211,7 @@ class TestMarketMessageConverters:
         from akash.messages.market import convert_msg_create_bid
 
         msg_dict = {
-            "@type": "/akash.market.v1beta4.MsgCreateBid",
+            "@type": "/akash.market.v1beta5.MsgCreateBid",
             "order": {
                 "owner": "akash1test",
                 "dseq": "123",
@@ -220,7 +235,7 @@ class TestMarketMessageConverters:
         from akash.messages.market import convert_msg_close_bid
 
         msg_dict = {
-            "@type": "/akash.market.v1beta4.MsgCloseBid",
+            "@type": "/akash.market.v1beta5.MsgCloseBid",
             "id": {
                 "owner": "akash1test",
                 "dseq": "123",
@@ -241,7 +256,7 @@ class TestMarketMessageConverters:
         from akash.messages.market import convert_msg_create_lease
 
         msg_dict = {
-            "@type": "/akash.market.v1beta4.MsgCreateLease",
+            "@type": "/akash.market.v1beta5.MsgCreateLease",
             "owner": "akash1test",
             "dseq": 123,
             "gseq": 1,
@@ -260,7 +275,7 @@ class TestMarketMessageConverters:
         from akash.messages.market import convert_msg_close_lease
 
         msg_dict = {
-            "@type": "/akash.market.v1beta4.MsgCloseLease",
+            "@type": "/akash.market.v1beta5.MsgCloseLease",
             "id": {
                 "owner": "akash1test",
                 "dseq": "123",
@@ -281,7 +296,7 @@ class TestMarketMessageConverters:
         from akash.messages.market import convert_msg_withdraw_lease
 
         msg_dict = {
-            "@type": "/akash.market.v1beta4.MsgWithdrawLease",
+            "@type": "/akash.market.v1beta5.MsgWithdrawLease",
             "id": {
                 "owner": "akash1test",
                 "dseq": "123",
@@ -303,50 +318,54 @@ class TestMarketProtobufFieldCompatibility:
 
     def test_msg_create_bid_fields(self):
         """Verify MsgCreateBid has all expected fields."""
-        from akash.proto.akash.market.v1beta4.bid_pb2 import MsgCreateBid
+        from akash.proto.akash.market.v1beta5.bidmsg_pb2 import MsgCreateBid
 
         msg = MsgCreateBid()
-        assert hasattr(msg, 'order')
-        assert hasattr(msg, 'provider')
+        # v1beta5: order and provider merged into id field
+        assert hasattr(msg, 'id')
         assert hasattr(msg, 'price')
         assert hasattr(msg, 'deposit')
         assert hasattr(msg, 'resources_offer')
 
     def test_msg_close_bid_fields(self):
-        """Verify MsgCloseBid has bid_id field, not lease_id."""
-        from akash.proto.akash.market.v1beta4.bid_pb2 import MsgCloseBid
+        """Verify MsgCloseBid has id field."""
+        from akash.proto.akash.market.v1beta5.bidmsg_pb2 import MsgCloseBid
 
         msg = MsgCloseBid()
-        assert hasattr(msg, 'bid_id')
+        # v1beta5: field renamed from bid_id to id
+        assert hasattr(msg, 'id')
         assert not hasattr(msg, 'lease_id')
-        assert not hasattr(msg, 'id')
+        assert not hasattr(msg, 'bid_id')
 
     def test_msg_create_lease_fields(self):
         """Verify MsgCreateLease has bid_id field."""
-        from akash.proto.akash.market.v1beta4.lease_pb2 import MsgCreateLease
+        from akash.proto.akash.market.v1beta5.leasemsg_pb2 import MsgCreateLease
 
         msg = MsgCreateLease()
+        # v1beta5: MsgCreateLease still uses bid_id
         assert hasattr(msg, 'bid_id')
         assert not hasattr(msg, 'lease_id')
         assert not hasattr(msg, 'id')
 
     def test_msg_close_lease_fields(self):
-        """Verify MsgCloseLease has lease_id field."""
-        from akash.proto.akash.market.v1beta4.lease_pb2 import MsgCloseLease
+        """Verify MsgCloseLease has id field."""
+        from akash.proto.akash.market.v1beta5.leasemsg_pb2 import MsgCloseLease
 
         msg = MsgCloseLease()
-        assert hasattr(msg, 'lease_id')
+        # v1beta5: field renamed from lease_id to id
+        assert hasattr(msg, 'id')
         assert not hasattr(msg, 'bid_id')
-        assert not hasattr(msg, 'id')
+        assert not hasattr(msg, 'lease_id')
 
     def test_msg_withdraw_lease_fields(self):
-        """Verify MsgWithdrawLease has bid_id field (confusing but correct)."""
-        from akash.proto.akash.market.v1beta4.lease_pb2 import MsgWithdrawLease
+        """Verify MsgWithdrawLease has id field."""
+        from akash.proto.akash.market.v1beta5.leasemsg_pb2 import MsgWithdrawLease
 
         msg = MsgWithdrawLease()
-        assert hasattr(msg, 'bid_id')
+        # v1beta5: field is id (not bid_id or lease_id)
+        assert hasattr(msg, 'id')
         assert not hasattr(msg, 'lease_id')
-        assert not hasattr(msg, 'id')
+        assert not hasattr(msg, 'bid_id')
 
 
 class TestMarketQueryParameterCompatibility:
@@ -354,7 +373,7 @@ class TestMarketQueryParameterCompatibility:
 
     def test_order_filters_all_parameters(self):
         """Test OrderFilters supports all expected parameters."""
-        from akash.proto.akash.market.v1beta4.order_pb2 import OrderFilters
+        from akash.proto.akash.market.v1beta5.filters_pb2 import OrderFilters
 
         filters = OrderFilters()
 
@@ -372,7 +391,7 @@ class TestMarketQueryParameterCompatibility:
 
     def test_bid_filters_all_parameters(self):
         """Test BidFilters supports all expected parameters."""
-        from akash.proto.akash.market.v1beta4.bid_pb2 import BidFilters
+        from akash.proto.akash.market.v1beta5.filters_pb2 import BidFilters
 
         filters = BidFilters()
 
@@ -417,7 +436,7 @@ class TestMarketTransactionStructures:
     def test_create_bid_message_structure(self):
         """Test create_bid creates message with correct structure."""
         expected_structure = {
-            '@type': '/akash.market.v1beta4.MsgCreateBid',
+            '@type': '/akash.market.v1beta5.MsgCreateBid',
             'order': {
                 'owner': 'akash1test',
                 'dseq': '123',
@@ -437,7 +456,7 @@ class TestMarketTransactionStructures:
     def test_close_bid_message_structure(self):
         """Test close_bid creates message with correct nested id structure."""
         expected_structure = {
-            '@type': '/akash.market.v1beta4.MsgCloseBid',
+            '@type': '/akash.market.v1beta5.MsgCloseBid',
             'id': {
                 'owner': 'akash1test',
                 'dseq': '123',
@@ -455,7 +474,7 @@ class TestMarketTransactionStructures:
     def test_create_lease_message_structure(self):
         """Test create_lease creates message with correct top-level structure."""
         expected_structure = {
-            '@type': '/akash.market.v1beta4.MsgCreateLease',
+            '@type': '/akash.market.v1beta5.MsgCreateLease',
             'owner': 'akash1test',
             'dseq': 123,
             'gseq': 1,
@@ -474,8 +493,8 @@ class TestMarketErrorPatterns:
 
     def test_lease_price_access_pattern(self):
         """Test correct vs incorrect lease price access patterns."""
-        from akash.proto.akash.market.v1beta4.query_pb2 import QueryLeaseResponse
-        from akash.proto.akash.market.v1beta4.lease_pb2 import Lease
+        from akash.proto.akash.market.v1beta5.query_pb2 import QueryLeaseResponse
+        from akash.proto.akash.market.v1.lease_pb2 import Lease
         from akash.proto.cosmos.base.v1beta1.coin_pb2 import DecCoin
 
         lease = Lease()
@@ -495,8 +514,8 @@ class TestMarketErrorPatterns:
 
     def test_bid_state_access_pattern(self):
         """Test correct vs incorrect bid state access patterns."""
-        from akash.proto.akash.market.v1beta4.query_pb2 import QueryBidResponse
-        from akash.proto.akash.market.v1beta4.bid_pb2 import Bid
+        from akash.proto.akash.market.v1beta5.query_pb2 import QueryBidResponse
+        from akash.proto.akash.market.v1beta5.bid_pb2 import Bid
 
         bid = Bid()
         bid.state = 1
@@ -512,15 +531,18 @@ class TestMarketErrorPatterns:
 
     def test_message_converter_field_mismatch(self):
         """Test detection of message converter field mismatches."""
-        from akash.proto.akash.market.v1beta4.lease_pb2 import MsgWithdrawLease, MsgCloseLease
+        from akash.proto.akash.market.v1beta5.leasemsg_pb2 import MsgWithdrawLease, MsgCloseLease
 
         withdraw_msg = MsgWithdrawLease()
         close_msg = MsgCloseLease()
 
-        assert hasattr(withdraw_msg, 'bid_id')
+        # v1beta5: both use 'id' field
+        assert hasattr(withdraw_msg, 'id')
         assert not hasattr(withdraw_msg, 'lease_id')
+        assert not hasattr(withdraw_msg, 'bid_id')
 
-        assert hasattr(close_msg, 'lease_id')
+        assert hasattr(close_msg, 'id')
+        assert not hasattr(close_msg, 'lease_id')
         assert not hasattr(close_msg, 'bid_id')
 
 
@@ -535,11 +557,11 @@ class TestMarketModuleIntegration:
             _initialize_message_converters()
 
         required_converters = [
-            "/akash.market.v1beta4.MsgCreateBid",
-            "/akash.market.v1beta4.MsgCloseBid",
-            "/akash.market.v1beta4.MsgCreateLease",
-            "/akash.market.v1beta4.MsgCloseLease",
-            "/akash.market.v1beta4.MsgWithdrawLease"
+            "/akash.market.v1beta5.MsgCreateBid",
+            "/akash.market.v1beta5.MsgCloseBid",
+            "/akash.market.v1beta5.MsgCreateLease",
+            "/akash.market.v1beta5.MsgCloseLease",
+            "/akash.market.v1beta5.MsgWithdrawLease"
         ]
 
         for msg_type in required_converters:
@@ -758,7 +780,7 @@ class TestMarketTransactionFunctionality:
 
         assert isinstance(bid_msg, dict)
         assert "@type" in bid_msg
-        assert bid_msg["@type"] == "/akash.market.v1beta4.MsgCreateBid"
+        assert bid_msg["@type"] == "/akash.market.v1beta5.MsgCreateBid"
         assert "id" in bid_msg
         assert "price" in bid_msg
 

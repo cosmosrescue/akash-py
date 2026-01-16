@@ -44,7 +44,7 @@ class AuditTx:
             )
 
             msg = {
-                "@type": "/akash.audit.v1beta3.MsgSignProviderAttributes",
+                "@type": "/akash.audit.v1.MsgSignProviderAttributes",
                 "owner": owner,
                 "auditor": wallet.address,
                 "attributes": [
@@ -104,7 +104,7 @@ class AuditTx:
             )
 
             msg = {
-                "@type": "/akash.audit.v1beta3.MsgDeleteProviderAttributes",
+                "@type": "/akash.audit.v1.MsgDeleteProviderAttributes",
                 "owner": owner,
                 "auditor": wallet.address,
                 "keys": keys,

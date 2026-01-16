@@ -23,6 +23,10 @@ from typing import Dict, List, Tuple
 os.environ['PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION'] = 'python'
 
 TEST_MODULES = {
+    # Import validation tests (CRITICAL)
+    'imports': {'file': 'test_all_imports.py', 'converters': 0},
+    'protobuf-imports': {'file': 'test_protobuf_imports.py', 'converters': 17},
+
     'client': {'file': 'client_tests.py', 'converters': 0},
     'wallet': {'file': 'wallet_tests.py', 'converters': 0},
     'tx': {'file': 'tx_tests.py', 'converters': 0},
@@ -200,7 +204,7 @@ class TestRunner:
         cosmos_modules = []
 
         for module_name, result in self.results.items():
-            if module_name in ['client', 'wallet', 'tx']:
+            if module_name in ['imports', 'protobuf-imports', 'client', 'wallet', 'tx']:
                 infrastructure_modules.append((module_name, result))
             elif module_name in ['market', 'deployment', 'escrow', 'provider', 'cert', 'audit', 'inventory',
                                  'cert-mtls', 'grpc-client', 'manifest', 'discovery-grpc', 'grpc-standalone']:
@@ -289,7 +293,7 @@ Examples:
   python run_all_tests.py --summary          # Show available modules
 
 Available modules:
-  Infrastructure: client, wallet, tx
+  Infrastructure: imports, protobuf-imports, client, wallet, tx
   Akash:         market, deployment, escrow, provider, cert, audit, inventory, cert-mtls, grpc-client, manifest, discovery-grpc, grpc-standalone
   Cosmos:        bank, staking, distribution, slashing, authz, feegrant, gov, evidence, inflation, ibc
         """
@@ -322,9 +326,9 @@ Available modules:
         print("=" * 80)
 
         print("\nINFRASTRUCTURE Modules:")
-        for module in ['client', 'wallet', 'tx']:
+        for module in ['imports', 'protobuf-imports', 'client', 'wallet', 'tx']:
             config = TEST_MODULES[module]
-            print(f"  {module:<15} - {config['converters']} converters")
+            print(f"  {module:<20} - {config['converters']} converters")
 
         print("\nAKASH Modules:")
         for module in ['market', 'deployment', 'escrow', 'provider', 'cert', 'audit', 'inventory',

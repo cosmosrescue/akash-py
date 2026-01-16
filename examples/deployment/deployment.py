@@ -19,6 +19,13 @@ For operations with manifest see manifest examples
 
 import sys
 import time
+from pathlib import Path
+
+# Development mode: Use local akash if running from repo
+examples_dir = Path(__file__).parent.parent
+if (examples_dir.parent / "akash").exists() and (examples_dir.parent / "pyproject.toml").exists():
+    sys.path.insert(0, str(examples_dir.parent))
+    print("✓ Development mode: Using local akash")
 
 try:
     from akash import AkashClient, AkashWallet
@@ -334,9 +341,9 @@ deployment:
             start_msg = client.deployment._start_group_msg(test_owner, test_dseq, test_gseq)
 
             formats_valid = (
-                    close_msg.get('@type') == '/akash.deployment.v1beta3.MsgCloseGroup' and
-                    pause_msg.get('@type') == '/akash.deployment.v1beta3.MsgPauseGroup' and
-                    start_msg.get('@type') == '/akash.deployment.v1beta3.MsgStartGroup'
+                    close_msg.get('@type') == '/akash.deployment.v1beta4.MsgCloseGroup' and
+                    pause_msg.get('@type') == '/akash.deployment.v1beta4.MsgPauseGroup' and
+                    start_msg.get('@type') == '/akash.deployment.v1beta4.MsgStartGroup'
             )
 
             if formats_valid:
@@ -356,7 +363,7 @@ deployment:
                 self.wallet.address, 12345, "1000000", "uakt", self.wallet.address
             )
 
-            if deposit_msg and deposit_msg.get('@type') == '/akash.deployment.v1beta3.MsgDepositDeployment':
+            if deposit_msg and deposit_msg.get('@type') == '/akash.deployment.v1beta4.MsgDepositDeployment':
                 print(f" Deposit deployment message format: valid")
                 step2_success = True
             else:

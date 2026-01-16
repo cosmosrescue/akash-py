@@ -1,1 +1,0 @@
-# IBC core commitment v1 module

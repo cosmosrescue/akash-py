@@ -7,7 +7,8 @@ Converts dictionary representations to protobuf messages for audit operations.
 
 def convert_msg_sign_provider_attributes(msg_dict, any_msg):
     """Convert MsgSignProviderAttributes dictionary to protobuf."""
-    from akash.proto.akash.audit.v1beta3.audit_pb2 import MsgSignProviderAttributes
+    # v1: Msg types moved to msg_pb2
+    from akash.proto.akash.audit.v1.msg_pb2 import MsgSignProviderAttributes
 
     pb_msg = MsgSignProviderAttributes()
     pb_msg.owner = msg_dict.get("owner", "")
@@ -24,7 +25,8 @@ def convert_msg_sign_provider_attributes(msg_dict, any_msg):
 
 def convert_msg_delete_provider_attributes(msg_dict, any_msg):
     """Convert MsgDeleteProviderAttributes dictionary to protobuf."""
-    from akash.proto.akash.audit.v1beta3.audit_pb2 import MsgDeleteProviderAttributes
+    # v1: Msg types moved to msg_pb2
+    from akash.proto.akash.audit.v1.msg_pb2 import MsgDeleteProviderAttributes
 
     pb_msg = MsgDeleteProviderAttributes()
     pb_msg.owner = msg_dict.get("owner", "")
